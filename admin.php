@@ -561,7 +561,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 						<h3> Supprimer un Magasin </h3>
 
-						<form id="form_supp_mag" onsubmit="if(shown == false) {confirm_form(); return false;} else{confirm_form();}" action="admin_functions.php" method="post">
+						<form id="form_supp_mag" onsubmit="if(shown == false) {confirm_form(); return false;} else{return true}" action="admin_functions.php" method="post">
 							<div class="two">
 								<label class="place_holder"> Magasin </label>
 								<input class="input" id="id_magasin" type="text" name="info_magasin" list="magasins" value="<?php echo $info_magasin; ?>" autocomplete="off" required>
@@ -614,6 +614,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 <script type="text/javascript">
 	shown = false;
+	sent = false;
 	message = jQuery("#message");
 	message.hide();
 
@@ -636,15 +637,14 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 	}
 
 	function confirm_form(){
-		console.log('confirm');
 		if(shown == false){
 			console.log('false');
 			shown = true;
 			show_message();
-		} else {
+		} else if(sent == false){
 			var formulaire = jQuery("#form_supp_mag");
 			formulaire.submit();
-			return true;
+			sent = true;
 		}
 	}
 

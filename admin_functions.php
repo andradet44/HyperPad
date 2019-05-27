@@ -377,7 +377,6 @@ function add_mag(){
 }
 
 function del_mag(){
-	echo "del_mag"; exit;
 	global $mysqli;
 
 	$info_magasin = NULL;
@@ -398,12 +397,12 @@ function del_mag(){
 		$mysqli->query($query_del_deffaillances);
 
 		//Suppression des pannes liées au magasin
-		$query_del_pannes = "DELETE FROM `pannes` WHERE `id_magasin` = '$info_magasin';";
+		$query_del_pannes = "DELETE FROM `pannes_radiopads` WHERE `id_magasin` = '$info_magasin';";
 		$mysqli->query($query_del_pannes);
 
 		//Suppression des parametres liées au magasin
 		$query_del_parametres = "DELETE FROM `parametres` WHERE `id_magasin` = '$info_magasin';";
-		$mysqli->query($query_del_pannes);
+		$mysqli->query($query_del_parametres);
 
 		//Suppression des prets liées au magasin
 		$query_del_prets = "DELETE FROM `prets` WHERE `id_magasin` = '$info_magasin';";
