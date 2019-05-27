@@ -12,7 +12,9 @@ $nom_societe = NULL;
 $departement = NULL;
 $id_magasin = NULL;
 
-$query_parametre = "SELECT * FROM `parametres`;";
+$client_IP = $_SERVER['REMOTE_ADDR'];
+
+$query_parametre = "SELECT * FROM `parametres` WHERE `ip_client` = '$client_IP';";
 $result_parametre = $mysqli->query($query_parametre);
 $nb_results = $result_parametre->num_rows;
 

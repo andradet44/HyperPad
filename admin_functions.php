@@ -366,6 +366,22 @@ function add_mag(){
 			$result = $mysqli->query($query_insert_mag);
 
 			if($result){
+				$query_mag = "SELECT * FROM `magasins` WHERE `departement` = '$departement_add' AND `nom` = '$nom_mag';";
+				$result_mag = $mysqli->query($query_mag);
+
+				if($result_mag){
+					while ($mag = $result_mag->fetch_assoc()) {
+						$id_mag = $mag['id_magasin'];
+						$alias_mag = $mag['alias'];
+						$alias_mag = strtolower($alias_mag);
+
+						//Création du compte admin
+						$query_insert_admin = "INSERT INTO `admins` (`id`, `username`, `password`, `id_magasin`)
+						VALUES ('$id_mag', 'admin$alias_mag', '8eded9ebe2cb7b95a17ddf4ef619d4671794f4ab8b03b2009ef0b43db9f3ea11', '$id_mag');";
+						$mysqli->query($query_insert_admin);
+					}
+				}
+
 				header("Location: admin.php?message=add_mag_ok");
 			} else{
 				header("Location: admin.php?message=add_ko&&departement_add=$departement_add&nom_mag=$nom_mag&alias=$alias&enseigne=$enseigne");

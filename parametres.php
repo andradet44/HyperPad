@@ -118,6 +118,8 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 				<label> Nom de la société : </label>
 				<select name='nom_societe'>";
 
+
+
 					$query_societe = "SELECT * FROM `magasins`;";
 					$result_societe = $mysqli->query($query_societe);
 
@@ -152,6 +154,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 				<input type='submit' id='valider_modal' value='Valider'>
 			</form>
 			</div>
+			<p style='color: red'> HyperPad V. 1.0  </p>
 		</div>
 	</div>
 		" ;
