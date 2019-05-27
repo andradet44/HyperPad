@@ -1,0 +1,11 @@
+;  The RegSave Utility created this file
+;  This utility was written by Paul Hurford, Symbol EMEA TS
+;  You use the utility at your own risk
+;
+;  Template File : \Application\RegSave.Reg
+;  Program Version : 2.20.01 May 13 2004 15:24:26
+; File created 1/11/2003 00:27:58
+;
+
+[HKEY_LOCAL_MACHINE\Ident]
+"Name"="FIC167"

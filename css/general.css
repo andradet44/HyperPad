@@ -1,0 +1,147 @@
+/*----------------------------------------------------------------------------------------
+	PAGE ELEMENTS
+----------------------------------------------------------------------------------------*/
+
+
+
+/*****************************/
+/* General */
+/*****************************/
+
+/* Reset CSS */
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	font-size: 100%;
+	}
+
+
+
+/*****************************/
+/* Mise en page */
+/*****************************/
+
+
+nav{
+	position: fixed;
+	top: 0;
+	background-color: #1b5790;
+	width: 100vw;
+	min-height: 55px;
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+nav li:hover{
+background-color: #2098D1;
+}
+
+li{
+	list-style-type: none;
+	display: inline-block;
+	cursor: pointer;
+	width: auto;
+	height: 50px;
+	padding: 10px 30px 0px 30px;
+	margin-left: -10px;
+}
+
+ul{
+	display: block;
+	width: 100%;
+	color: white;
+}
+
+.section_title{
+	margin-top: 120px;
+	color: #1b5790;
+	text-shadow: 1px 1px white;
+	border-style: solid;
+	border-width: 0px 0px 2px 0px;
+	border-color: #1b5790;
+}
+
+table{
+	display: block;
+	width: 98%;
+	margin: auto;
+	margin-top: 60px;
+	text-align: center;
+	/* border-collapse: collapse; */
+}
+
+
+td, th{
+	width: 14vw;
+	padding: 8px;
+	background-color: #f2f2f2;
+	border-radius: 5px;
+}
+
+th{
+	cursor: pointer;
+}
+
+tr:hover > .color{
+	background-color: #2098D1;
+	color: white;
+}
+
+.entete{
+	background-color: #4CAF50;
+	border-style: solid;
+	border-width: 0px 0px 2px 0px;
+	font-weight: bold;
+	font-size: 20px;
+	color: white;
+	cursor: pointer;
+}
+
+.flecheDesc {
+  width: 0;
+  height: 0;
+  float:right;
+  margin-top: 10px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
+}
+.flecheAsc {
+  width: 0;
+  height: 0;
+  float:right;
+	margin-top: 10px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+}
+
+
+.avectri th {
+	text-align:center;
+	vertical-align: middle;
+	background-color: #4CAF50;
+	color: #fff;
+}
+.avectri th.selection {
+	background-color:#228B22;
+	color: #fff;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.avectri th.selection .flecheDesc {border-bottom-color: white;}
+.avectri th.selection .flecheAsc {border-top-color: white;}
+
+@media (max-width: 1000px){
+	li{
+		display: block;
+		width: 92.5vw;
+		margin: auto;
+		text-align: center;
+	}
+	nav{
+		position: inherit;
+	}
+}

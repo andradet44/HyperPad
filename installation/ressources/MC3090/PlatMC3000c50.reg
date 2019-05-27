@@ -1,0 +1,33 @@
+[HKEY_LOCAL_MACHINE\Drivers\BuiltIn\TermConfig\Devices\Security]
+	;
+	; indicates which configure type, from 0 - MAX_CONFIG_TYPE
+	; 
+	"ConfigType"=dword:4
+
+	;  
+	; ConfigData value - translates dword data (in hex) to meaningful string name
+	;                    (The string name may change however the meaning of item 1, 2, 4 etc must always be the same
+	;                     in order to match RCMDef.h)
+	;
+	"302"="Core"
+	"303"="Professional"
+
+[HKEY_LOCAL_MACHINE\Drivers\BuiltIn\TermConfig\Devices\Security\AppCenter]
+	"RegSection"=dword:80000001			 		; HKCU
+	"RegPath"="Software\\Symbol\\Security"		; Driver's base path
+	"RegOverride"=dword:1
+
+[HKEY_CURRENT_USER\Software\Symbol\Security]
+"PlatKey"=hex:\
+	01,02,00,00,01,68,00,00,00,a4,00,00,2a,90,21,60,9e,e0,a0,73,ce,1c,85,47,a5,\
+	e8,11,b3,01,c2,64,50,c1,b8,99,a7,9b,8b,b4,eb,f9,a8,f2,57,1e,6a,ee,eb,da,0a,\
+	2c,4c,85,24,43,1c,9e,e8,4d,d1,29,b2,3a,fe,d4,8d,67,71,86,5c,8d,6a,10,4e,4b,\
+	5d
+
+[HKEY_CURRENT_USER\Software\Symbol\Security]
+"PlatKey"=hex:\
+	01,02,00,00,01,68,00,00,00,a4,00,00,89,62,9f,ba,a9,22,2d,64,34,ce,f5,5f,2d,\
+	8d,93,08,ca,01,6a,3b,ac,bc,7a,29,c4,c7,01,f4,17,28,cf,aa,dd,32,c2,bb,49,aa,\
+	0f,84,09,ad,1a,3b,fc,dd,a3,34,6a,26,d9,af,7b,d0,7e,7c,25,81,f1,fa,87,a3,7a,\
+	8d
+

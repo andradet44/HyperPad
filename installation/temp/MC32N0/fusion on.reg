@@ -1,0 +1,130 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Drivers\BuiltIn\WLAN]
+"InitialState"=dword:00000000
+"Prefix"="WLP"
+"Dll"="PmProxy.Dll"
+"Order"=dword:00000008
+"Index"=dword:00000001
+"DeviceArrayIndex"=dword:00000004
+"WLANSlot"=dword:00000000
+"Flags"=dword:00000008
+"IClass"=hex(7):\
+ 7B,41,33,32,39,34,32,42,37,2D,39,32,30,43,2D,34,38,36,62,2D,42,30,45,36,\
+ 2D,39,32,41,37,30,32,41,39,39,42,33,35,7D,00,7B,66,38,61,36,62,61,39,38,\
+ 2D,30,38,37,61,2D,34,33,61,63,2D,61,39,64,38,2D,62,37,66,31,33,63,35,62,\
+ 61,65,33,31,7D,00,7B,39,34,31,30,37,44,37,30,2D,33,34,43,46,2D,34,31,39,\
+ 61,2D,42,41,42,41,2D,31,45,35,30,39,36,31,38,35,33,34,37,7D,00,00
+"FriendlyName"="WLAN Proxy Driver for Motorola WLAN Adapter"
+"SupportedStates"=dword:00000011
+"InitFlags"=dword:00000000
+"SlotResetOnResume"=dword:00000000
+"SlotResetWait"=dword:000001F4
+
+[HKEY_LOCAL_MACHINE\Drivers\BuiltIn\WLAN\ActivityEvents]
+"PowerManager/SystemIdleTimerReset"=""
+
+[HKEY_LOCAL_MACHINE\Comm\Tcpip\Parms]
+"DhcpMaxRetry"=dword:2
+"DhcpRetryDialogue"=dword:4
+"AutoCfg"=dword:0
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Power\Timeouts]
+ "BattSuspendTimeout"=dword:00000000
+ "ACSuspendTimeout"=dword:00000000
+
+[HKEY_CURRENT_USER\Software\Microsoft\Terminal Server Client\Default]
+"MRU0"="10.10.10.196"
+"displayconnectionbar"=dword:00000000
+
+[HKEY_CURRENT_USER\Software\Microsoft\Terminal Server Client\UsernameHint]
+"10.10.10.196"="fic175@gbh"
+
+[HKEY_LOCAL_MACHINE\Services\TIMESVC]
+"UserProcGroup"=dword:00000002
+"Flags"=dword:00000010
+"multicastperiod"=dword:36EE80
+"threshold"=dword:5265C00
+"recoveryrefresh"=dword:36EE80
+"refresh"=dword:5265C00
+"Context"=dword:0
+"Autoupdate" = dword:1 
+"Server":REG_MULTI_SZ
+"server" = "10.10.10.160"
+"ServerRole" = dword:0
+"Trustlocalclock" = dword:0 
+"Dll"="=multi_sz:"sntpsvc.dll","timesvc.dll"
+"Order"=dword:0000000b
+"Keep"=dword:1
+"Prefix"="NTP"
+"Index"=dword:0
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\SymbolBluetooth]
+"RadioState"=dword:00000002
+
+[HKEY_LOCAL_MACHINE\Time]
+"TimeZoneInformation"=hex:\
+      B4,00,00,00,53,00,41,00,20,00,45,00,61,00,73,00,74,00,65,00,72,00,6E,00,\
+      20,00,53,00,74,00,61,00,6E,00,64,00,61,00,72,00,64,00,20,00,54,00,69,00,\
+      6D,00,65,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,\
+      00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,53,00,41,00,20,00,45,00,\
+      61,00,73,00,74,00,65,00,72,00,6E,00,20,00,44,00,61,00,79,00,6C,00,69,00,\
+      67,00,68,00,74,00,20,00,54,00,69,00,6D,00,65,00,00,00,00,00,00,00,00,00,\
+      00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,\
+      C4,FF,FF,FF
+"TZID"=dword:940
+
+[HKEY_LOCAL_MACHINE\Time Zones]
+@="Eastern Standard Time"
+"DefaultTZID"=dword:35
+
+[HKEY_LOCAL_MACHINE\Time Zones\SA Eastern Standard Time]
+"Display"="(GMT-03:00) Cayenne, Fortaleza"
+"Dlt"="SA Eastern Daylight Time"
+"Std"="SA Eastern Standard Time"
+"TZI"=hex:\
+      B4,00,00,00,00,00,00,00,C4,FF,FF,FF,00,00,00,00,00,00,00,00,00,00,00,00,\
+      00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Clock]
+"AutoDST" = dword:00000000
+
+
+[HKEY_LOCAL_MACHINE\Hardware\DEVICEMAP\BACKLIGHT]
+"BattBacklightIntensity"=dword:0000001E
+"ACBacklightIntensity"=dword:0000001E
+"BacklightIntensity"=dword:0000001E
+"MddVersion"="0.2"
+"BacklightMax"=dword:00000064
+"BacklightMin"=dword:0000001E
+"BacklightLevels"=dword:00000005
+
+
+[HKEY_LOCAL_MACHINE\Hardware\DEVICEMAP\TOUCH]
+"CalibrationData"=""
+
+[HKEY_CURRENT_USER\ControlPanel\Volume]
+"Volume"=dword:858993459
+"Screen"=dword:00000000
+"Key"=dword:00000000
+"Mute"=dword:00000007
+
+[HKEY_LOCAL_MACHINE\Software\Motorola\DWStartUp]
+"DontLoadOnStartUp"=dword:00000000
+; 0 - start after a reset, 1 - stop after a reset
+"DontInstallOnStartUp"=dword:00000000
+; 0 - install after a reset, 1 - dont install after a reset
+
+[HKEY_CURRENT_USER\ControlPanel\Desktop]
+"Wallpaper" = ""
+
+[HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main]
+"Search Page" = "http://www.google.com"
+"Start Page" = "http://www.google.com"
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ErrorReporting\UploadSettings]
+"UploadFailedDlg" = dword:00000000 
+"UploadSucceededDlg" = dword:00000000 
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ErrorReporting\DumpSettings]
+"DumpEnabled" = dword:00000000 

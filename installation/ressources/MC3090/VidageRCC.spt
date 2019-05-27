@@ -1,0 +1,88 @@
+;         Transfert files from the radiopad to FTP server 
+;
+;         Author  : Laurent GATELIER
+;         Company : SERV-ID
+;         DATE    : 2014/11/07
+;
+;
+;
+;
+;DEBUGON "\application\TEMP\vidage.txt" 
+;SetDebugMask 0xffffffff
+
+
+SETVAR int Count = 0
+SETVAR string FtpServer = "10.10.10.192"
+SETVAR string FtpUserName = "RadiopadRCC"
+SETVAR string FtpPassword = "Ficobam"
+
+:BEGIN
+DELETEFILE "Application\meti_radiopad\vidage\dummy.txt" 
+IF MessageBox("Voulez-vous transférer les fichiers ?", CAPTION="Transfert" , YESNO, MB_ICONQUESTION) == 1
+	      GOTO RFCHECK
+    ELSE
+       	GOTO END
+
+:RFCHECK
+REM IF CheckRF() == 1
+      GOTO LISTFILES
+REM ELSE 
+REM       GOTO NORF
+REM ENDIF      
+        
+:LISTFILES
+DIRLIST "Application\meti_radiopad\vidage\*.*" "\Application\VidageList.txt"
+SLEEP 2000
+SETVAR int InFile = OpenTextFile( "\Application\VidageList.txt" )
+SETVAR string LineFile = ReadTextFile( InFile, READLINE )
+
+:READ
+SETVAR string LineFile = ReadTextFile( InFile, MAXCHARS:37, READLINE )
+SetVar int lenght = strlen( LineFile )
+    IF ( lenght == 36 )
+        GOTO FTP   
+    ELSE
+        GOTO ENDOFFILE
+    ENDIF
+       
+:FTP    
+SETVAR string FileToFtp = "/Vidages_Radiopad/" + LineFile
+SETVAR string LocalFile = "\Application\meti_radiopad\vidage\" + LineFile
+FTP ID="radiopad" IP=FtpServer PASV CMD="PUT" LOCAL=LocalFile REMOTE=FileToFtp USERNAME=FtpUserName PASSWORD=FtpPassword
+FTP CLOSE ID="radiopad"
+SETVAR string LineFile2 = ReadTextFile( InFile, READLINE )
+SETVAR int Count = Count + 1
+GOTO READ
+
+:ENDOFFILE
+CloseTextFile( InFile )
+SETVAR string Count = Tostring(Count)
+SETVAR string MsgFiles = "Vous avez transféré " + Count + " fichier(s)"
+MessageBox (MsgFiles, CAPTION="Transfert", MB_OK, MB_ICONINFORMATION)
+;DisplayDialog ("Vous avez transféré\n\n" + Count + "fichier(s)", FONTSIZE 24 BOLDFONT)
+
+:ASKDELETEFILES
+    IF MessageBox("Effacer les fichiers du Radiopad ?", CAPTION="Transfert" , YESNO, MB_ICONQUESTION) == 1
+	      GOTO DELETEFILES
+    ELSE
+       	GOTO NODELETEFILES
+ENDIF
+
+:NORF
+MessageBox ("Vous n'êtes pas dans une zone de couverture radio. Veuillez vous déplacer et réessayer.", CAPTION="Transfert" , MB_OK, MB_ICONERROR)
+;DisplayDialog ("Vous n'êtes pas dans\n\n une zone de couverture\n\n radio.\n\n\n Veuillez vous déplacer et réessayer.", FONTSIZE 24 BOLDFONT)
+GOTO END
+
+:NODELETEFILES
+MessageBox ("Fichiers non éffacés", CAPTION="Transfert", MB_OK, MB_ICONINFORMATION)
+GOTO END
+
+:DELETEFILES
+IF MessageBox("Effacement des fichiers - Attention Pertes des données!!!", CAPTION="Transfert", YESNO ,MB_ICONSTOP, MB_DEFBUTTON2) == 1
+  DELETEFILE "Application\meti_radiopad\vidage\*.*" 
+	MessageBox ("Fichiers éffacés", CAPTION="Transfert", MB_OK, MB_ICONINFORMATION)
+ELSE  
+GOTO END
+ENDIF
+
+:END
