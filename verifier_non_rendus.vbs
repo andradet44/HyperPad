@@ -1,7 +1,6 @@
 set cn = CreateObject("ADODB.Connection")
-set rs = CreateObject("ADODB.Recordset")
-set rs1 = CreateObject("ADODB.Recordset")
-set rs2 = CreateObject("ADODB.Recordset")
+set rs_zero = CreateObject("ADODB.Recordset")
+
 
 
 
@@ -9,35 +8,58 @@ connectionString = "Driver={MySQL ODBC 5.3 ANSI Driver};Server=10.50.91.89; Data
 cn.Open connectionString
 
 
-'R�cup�ration des param�tres en base de donn�es'
+'Recuperation des parametres en base de donnees'
 '---------------------------------------------------------------------------------------------------------------'
-rs.open "SELECT * FROM `parametres`" , cn , 3
+rs_zero.open "SELECT * FROM `parametres`" , cn , 3
 
-Id_magasin = "NULL"
-Nom_societe = "NULL"
-Departement = "NULL"
-Alias_magasin = "NULL"
-Mail_admin = "NULL"
+Dim Id_magasin()
+Dim Nom_societe()
+Dim Departement()
+Dim Alias_magasin()
+Dim Mail_admin()
 
+Dim i
+i = 0
 
-while rs.EOF=false
+'Enregistrement des donnees dans des tableaux'
+while rs_zero.EOF=false
 
-  Id_magasin = rs(1)
-  Nom_societe = rs(2)
-  Departement = rs(3)
-  Alias_magasin = rs(4)
-  Mail_admin = rs(5)
+  ReDim Preserve Id_magasin(i+1)
+  Id_magasin(i) = rs_zero(1)
 
-	call send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
+  ReDim Preserve Nom_societe(i+1)
+  Nom_societe(i) = rs_zero(3)
 
-  rs.MoveNext
+  ReDim Preserve Departement(i+1)
+  Departement(i) = rs_zero(4)
+
+  ReDim Preserve Alias_magasin(i+1)
+  Alias_magasin(i) = rs_zero(5)
+
+  ReDim Preserve Mail_admin(i+1)
+  Mail_admin(i) = rs_zero(6)
+
+  i = i + 1
+
+  rs_zero.MoveNext
 Wend
 
-'Fermeture du r�sultat de la requette'
-rs.close
+'Fermeture du resultat de la requette'
+rs_zero.close
 
 
-Sub send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
+'Lance la fonction de recuperation des donnees et envoi des mails'
+i = 0
+For Each id In Id_magasin
+	if(Id_magasin(i) <> "") Then 
+		result = send_mail (Id_magasin(i), Nom_societe(i), Departement(i), Alias_magasin(i), Mail_admin(i))
+		i = i + 1
+	End If
+Next
+
+Function send_mail(Id_magasin, Nom_societe, Departement , Alias_magasin , Mail_admin)
+	set rs = CreateObject("ADODB.Recordset")
+	set rs_un = CreateObject("ADODB.Recordset")
 	d = Right(String(2, "0") & Day(date), 2)
 	m = Right(String(2, "0") & Month(date), 2)
 	y = Year(date)
@@ -90,16 +112,16 @@ Sub send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
 					"<th class='entete'> Nom </th>" &_
 					"<th class='entete'> Prenom </th>" &_
 					"<th class='entete'> Code radiopad </th>" &_
-					"<th class='entete'> Date pr�t </th>" &_
+					"<th class='entete'> Date pr?t </th>" &_
 				"</tr>" &_
 			"</thead>"
 
 
-	'R�cup�ration de la liste des radiopads non rendus en base de donn�es'
+	'Recuperation de la liste des radiopads non rendus en base de donnees'
 	'---------------------------------------------------------------------------------------------------------------'
 	If Id_magasin <> "NULL" Then
 		rs.open "SELECT * FROM `prets` WHERE `date_retour` = '0000-00-00 00:00:00' AND `id_magasin` = " & Id_magasin & " ORDER BY `date_pret` DESC" , cn , 3
-
+		wscript.echo "SELECT * FROM `prets` WHERE `date_retour` = '0000-00-00 00:00:00' AND `id_magasin` = " & Id_magasin & " ORDER BY `date_pret` DESC"
 
 		while rs.EOF=false
 			message = message & "<tr>"
@@ -108,23 +130,23 @@ Sub send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
 			Id_radiopad = rs(2)
 			Date_pret = rs(3)
 
-		  	rs1.open "SELECT * FROM `utilisateurs` WHERE `id` =" & Id_utilisateur & " AND `id_magasin` = " & Id_magasin , cn , 3
+		  	rs_un.open "SELECT * FROM `utilisateurs` WHERE `id` =" & Id_utilisateur & " AND `id_magasin` = " & Id_magasin , cn , 3
 
-		  	'R�cup�ration des informations de utilisateur'
+		  	'Recuperation des informations de utilisateur'
 
-		  	while rs1.EOF=false
-		  		Nom = rs1(1)
-		  		Prenom = rs1(2)
-		  		Non_rendu = rs1(5)
+		  	while rs_un.EOF=false
+		  		Nom = rs_un(1)
+		  		Prenom = rs_un(2)
+		  		Non_rendu = rs_un(5)
 		  		Non_rendu = Non_rendu + 1
-		  		rs1.MoveNext
+		  		rs_un.MoveNext
 
 		  	Wend
 
-		  	rs1.close
+		  	rs_un.close
 
-		  	'Met � jour son nombre de prets non rendus en fin de journ�e'
-		  	rs1.open "UPDATE `utilisateurs` SET  `non_rendu` = " & Non_rendu & " WHERE `id` = " & Id_utilisateur & " AND `id_magasin` = " & Id_magasin , cn , 3
+		  	'Met a jour son nombre de prets non rendus en fin de journee'
+		  	rs_un.open "UPDATE `utilisateurs` SET  `non_rendu` = " & Non_rendu & " WHERE `id` = " & Id_utilisateur & " AND `id_magasin` = " & Id_magasin , cn , 3
 
 
 	  		message = message & "<td class='color'>" & Id_utilisateur & "</td>"
@@ -142,14 +164,14 @@ Sub send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
 		message = message & "</tbody>"
 		message = message & "</table></body></html>"
 
-		'Fermeture du r�sultat de la requette'
+		'Fermeture du resultat de la requette'
 		rs.close
 
 
-		'Pr�paration pour lenvoi du mail'
+		'Preparation pour lenvoi du mail'
 		'---------------------------------------------------------------------------------------------------------------'
 		Sujet = "Liste radiopads non rendus" & DateToday
-		From = "HyperPad" & Nom_societe & "@gbh.fr"
+		From = "hyperpad" & Nom_societe & "@gbh.fr"
 
 		Set mail = CreateObject("CDO.Message")
 		mail.From = From
@@ -167,11 +189,12 @@ Sub send_mail(Id_magasin, Nom_societe, Departement, Alias_magasin, Mail_admin)
 
 	End If
 
-
-
-	'---------------------------------------------------------------------------------------------------------------'
-	'Fermeture de la connexion'
-	cn.close
-
 	'wscript.echo "Script Terminee"'
-End Sub
+
+	send_mail = true
+End Function
+
+
+'---------------------------------------------------------------------------------------------------------------'
+'Fermeture de la connexion'
+cn.close
