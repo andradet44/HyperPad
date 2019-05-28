@@ -10,6 +10,24 @@
 	font-size: 20px;
 }
 
+input{
+	display: inline-block;
+	margin-left: 30px;
+	margin-right: 20%;
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.input{
+	height: 40px;
+	border-style: none;
+	background: #4CAF50;
+	color: #ffffff;
+	border: 0;
+	border-radius: 6px;
+	text-align: center;
+}
+
 
 .action{
   border-radius: 5px;
@@ -47,7 +65,7 @@ h2{
 }
 
 th, td{
-  width: 23%;
+  width: 22%;
 }
 
 .panne_reparation{

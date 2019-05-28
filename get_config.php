@@ -25,15 +25,24 @@ if($nb_results > 0){
 		$departement = $parametre['departement'];
 		$alias_magasin = $parametre['alias_magasin'];
 		$mail_admin = $parametre['mail_admin'];
+		$nb_annees_purge = $parametre['nombre_annees_purge'];
 
     $_SESSION['id_magasin'] = $id_magasin;
     $_SESSION['nom_societe'] = $nom_societe;
     $_SESSION['departement'] = $departement;
 		$_SESSION['mail_admin'] = $mail_admin;
     $_SESSION['alias_magasin'] = $alias_magasin;
+		$_SESSION['nb_annees_purge'] = $nb_annees_purge;
+
 	}
 	$result_parametre->close();
-	header("Location: index.php");
+
+	if($nb_annees_purge != "" && $nb_annees_purge >= 0){
+		header("Location: admin_functions.php?action=sup_avant_date&nb_annees=$nb_annees_purge&first_config=yes");
+	} else{
+		header("Location: index.php");
+	}
+
 } else{
 	header("Location: parametres.php?first_config=true");
 }

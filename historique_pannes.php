@@ -1,12 +1,4 @@
 <?php
-$message = NULL;
-if (isset($_GET['message'])) {
-	$message = $_GET['message'];
-}
-
-if($message == "reparation_ok") $message_div = "<div class='green'> Réparation enregistrée </div>";
-
-
 // Paramètres de connexion
 include_once("dbConfig.php");
 
@@ -15,7 +7,6 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 ?>
 
 <!DOCTYPE html>
-
 <html>
 	<!-- En tête -->
 	<head>
@@ -82,9 +73,6 @@ if($nom_societe != NULL && $departement != NULL){
 	echo "<h2> $nom_societe $departement </h2>";
 
 	echo "
-	<div id='div_message'>
-	</div>
-
 	<input class='input search' id='search' type='text' placeholder='Code radiopad'>
 
 	<table id='tab_search' class='tab_search avectri'>
@@ -144,19 +132,6 @@ if($nom_societe != NULL && $departement != NULL){
 }
 
 ?>
-
-<script type="text/javascript">
-	// On affiche le message
-	document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
-
-	// On l'efface 5 secondes plus tard
-	setTimeout(function() {
-		if(document.getElementById('div_message').innerHTML != ""){
-			document.getElementById('div_message').innerHTML = "";
-		}
-	},5000);
-
-</script>
 
 	</body>
 </html>

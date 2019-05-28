@@ -4,7 +4,9 @@ if (isset($_GET['message'])) {
 	$message = $_GET['message'];
 }
 
-if($message == "reparation_ok") $message_div = "<div class='green'> Réparation enregistrée </div>";
+$message_div = "";
+$type = "";
+if($message == "reparation_ok") {$message_div = "<div class='green'> Réparation validée </div>"; $type = "success";}
 
 
 // Paramètres de connexion
@@ -27,6 +29,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
 		<script type='text/javascript' src='./js/tri-donnees.js'></script>
 		<script type='text/javascript' src='./js/search.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 
 		<!-- Encodage UTF8 pour les accents -->
@@ -82,9 +85,6 @@ if($nom_societe != NULL && $departement != NULL){
 	echo "<h2> $nom_societe $departement </h2>";
 
 	echo "
-	<div id='div_message'>
-	</div>
-
 	<input class='input search' id='search' type='text' placeholder='Code radiopad'>
 
 	<table id='tab_search' class='tab_search avectri'>
@@ -93,6 +93,7 @@ if($nom_societe != NULL && $departement != NULL){
 	<th class='entete selection' data-tri='1' data-type='num'> Code Radiopad </th>
 	<th class='entete'> Problème </th>
 	<th class='entete'> Date Problème </th>
+	<th class='entete'> Status </th>
 	<th class='entete'> Date Réparation </th>
 	</tr>
 	</thead>
@@ -114,6 +115,22 @@ if($nom_societe != NULL && $departement != NULL){
 					$panne = $prob['panne'];
 					$date_panne = $prob['date_panne'];
 					$date_reparation = $prob['date_reparation'];
+
+					$query_status = "SELECT * FROM `radiopads` WHERE `id_radio` = '$id_radio' AND `id_magasin` = '$id_magasin';";
+					$result_status = $mysqli->query($query_status);
+					if($result_status){
+						while ($status = $result_status->fetch_assoc()) {
+							$etat = $status['etat'];
+							if($etat == 'PROD') $etat_affichage = "En PROD";
+							if($etat == 'STOCK') $etat_affichage = "En Stock";
+							if($etat == 'REPARATION') $etat_affichage = "En Réparation";
+							if($etat == 'REBUS') $etat_affichage = "Au Rebus";
+							if($etat == 'REPARER') $etat_affichage = "A Envoyer en réparation";
+							if($etat == 'PERDU') $etat_affichage = "Perdu";
+						}
+						$result_status->close();
+					}
+
 					if($date_reparation == "0000-00-00 00:00:00"){
 						$date_reparation = "Non Réparé";
 					}
@@ -123,6 +140,7 @@ if($nom_societe != NULL && $departement != NULL){
 					echo "<td class='color code'> $id_radio </td>";
 					echo "<td class='color'> $panne </td>";
 					echo "<td class='color'> $date_panne </td>";
+					echo "<td class='color'> $etat_affichage </td>";
 					echo "<td class='color'> $date_reparation </td>";
 					echo "<td class='td_action'>
 					<form action='problemes.php' method='post'>
@@ -159,12 +177,21 @@ if($nom_societe != NULL && $departement != NULL){
 
 <script type="text/javascript">
 	// On affiche le message
-	document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
+	var message = "<?php echo $message_div ?>";
+	var type = "<?php echo $type ?>";
+
+	if(message != ""){
+		Swal.fire(
+			message,
+			'',
+			type
+		)
+	}
 
 	// On l'efface 5 secondes plus tard
 	setTimeout(function() {
-		if(document.getElementById('div_message').innerHTML != ""){
-			document.getElementById('div_message').innerHTML = "";
+		if(message != ""){
+			message = "";
 		}
 	},5000);
 

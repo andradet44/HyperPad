@@ -24,25 +24,26 @@ if (isset($_GET['info_magasin'])) {
 	$info_magasin = $_GET['info_magasin'];
 }
 
-if($message == NULL) $message_div = "";
-if($message == "add_ko") $message_div = "<div class='red'> Veuillez vérifier votre saisie </div>";
-if($message == "add_fournisseur_ko") $message_div = "<div class='red'> Le fournisseur existe déjà ou les données ne sont pas correctes </div>";
-if($message == "del_ko") $message_div = "<div class='red'> Veuillez vérifier votre saisie </div>";
-if($message == "mod_ko") $message_div = "<div class='red'> Les modifications n'ont pas été prises en compte. Veuillez vérifier votre saisie </div>";
-if($message == "mag_exist") $message_div = "<div class='red'> Le magasin que vous essayez d'ajouter existe déjà en base de données </div>";
+if($message == NULL) {$message_div = ""; $type = "";}
+if($message == "add_ko") {$message_div = "<div class='red'> Veuillez vérifier votre saisie </div>"; $type = "error";}
+if($message == "add_fournisseur_ko") {$message_div = "<div class='red'> Le fournisseur existe déjà ou les données ne sont pas correctes </div>"; $type = "error";}
+if($message == "del_ko") {$message_div = "<div class='red'> Veuillez vérifier votre saisie </div>"; $type = "error";}
+if($message == "mod_ko") {$message_div = "<div class='red'> Les modifications n'ont pas été prises en compte. Veuillez vérifier votre saisie </div>"; $type = "error";}
+if($message == "mag_exist") {$message_div = "<div class='red'> Le magasin que vous essayez d'ajouter existe déjà en base de données </div>"; $type = "error";}
 
-if($message == "add_user_ok") $message_div = "<div class='green'> Utilisateur ajouté avec succès </div>";
-if($message == "add_fournisseur_ok") $message_div = "<div class='green'> Fournisseur ajouté avec succès </div>";
-if($message == "del_user_ok") $message_div = "<div class='green'> Utilisateur supprimé avec succès </div>";
-if($message == "add_radio_ok") $message_div = "<div class='green'> Radiopad ajouté avec succès </div>";
-if($message == "add_radio_plage_ok") $message_div = "<div class='green'> $nb_radio Radiopad(s) ajouté(s) avec succès </div>";
-if($message == "del_radio_ok") $message_div = "<div class='green'> Radiopad supprimé avec succès </div>";
-if($message == "add_mag_ok") $message_div = "<div class='green'> Magasin ajouté avec succès </div>";
-if($message == "del_mag_ok") $message_div = "<div class='green'> Magasin supprimé avec succès </div>";
-if($message == "sup_avant_date_ok") $message_div = "<div class='green'> $result prêt(s) supprimé(s) avec succès  </div>";
-if($message == "pas_pret") $message_div = "<div class='red'> Aucun prêt trouvé avant cette date </div>";
-if($message == "mod_user") $message_div = "<div class='green'> Les modifications apportées à l'utilisateur ont bien été enregistrées </div>";
-if($message == "mod_radio") $message_div = "<div class='green'> Les modifications apportées au Radiopad ont bien été enregistrées </div>";
+if($message == "add_user_ok") {$message_div = "<div class='green'> Utilisateur ajouté avec succès </div>"; $type = "success";}
+if($message == "add_fournisseur_ok") {$message_div = "<div class='green'> Fournisseur ajouté avec succès </div>"; $type = "success";}
+if($message == "del_user_ok") {$message_div = "<div class='green'> Utilisateur supprimé avec succès </div>"; $type = "success";}
+if($message == "add_radio_ok") {$message_div = "<div class='green'> Radiopad ajouté avec succès </div>"; $type = "success";}
+if($message == "add_radio_plage_ok") {$message_div = "<div class='green'> $nb_radio Radiopad(s) ajouté(s) avec succès </div>"; $type = "success";}
+if($message == "del_radio_ok") {$message_div = "<div class='green'> Radiopad supprimé avec succès </div>"; $type = "success";}
+if($message == "add_mag_ok") {$message_div = "<div class='green'> Magasin ajouté avec succès </div>"; $type = "success";}
+if($message == "del_mag_ok") {$message_div = "<div class='green'> Magasin supprimé avec succès </div>"; $type = "success";}
+if($message == "sup_avant_date_ok") {$message_div = "<div class='green'> $result prêt(s) supprimé(s) avec succès  </div>"; $type = "success";}
+if($message == "pas_pret") {$message_div = "<div class='red'> Aucun prêt trouvé avant cette date </div>"; $type = "info";}
+if($message == "set_purge_ok") {$message_div = "<div class='green'> Le changement a été pris en compte </div>"; $type = "success";}
+if($message == "mod_user") {$message_div = "<div class='green'> Les modifications apportées à l'utilisateur ont bien été enregistrées </div>"; $type = "success";}
+if($message == "mod_radio") {$message_div = "<div class='green'> Les modifications apportées au Radiopad ont bien été enregistrées </div>"; $type = "success";}
 
 
 
@@ -140,6 +141,11 @@ if (isset($_SESSION['nom_societe'])) {
 if (isset($_SESSION['departement'])) {
 	$departement = $_SESSION['departement'];
 }
+$nb_annees_purge = NULL;
+if (isset($_SESSION['nb_annees_purge'])) {
+	$nb_annees_purge = $_SESSION['nb_annees_purge'];
+}
+
 
 
 $login = NULL;
@@ -176,6 +182,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		<!-- Fichiers Javascripts -->
 		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
 		<script type='text/javascript' src='./js/ajax.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 
 		<!-- Encodage UTF8 pour les accents -->
@@ -367,17 +374,20 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 							<input class="ok" style="display: block" type="submit" value="Supprimer">
 						</form>
 
-						<h3> Supprimer tous les prêts et Retours datant de X années </h3>
+						<h3> Supprimer tous les prêts et Retours au bout de X années </h3>
 
 						<form id="2" action="admin_functions.php" method="post">
 							<div class="two">
 								<label class="place_holder"> Nombre d'années </label>
-								<input class="input" type="hidden" name="action" value="sup_avant_date">
-								<input class="input" type="number" min="0" name="nb_annees" value="3" required>
+								<p style='color: red; background: white'> Une fois défini, tous les prêts et retours datant de X années ou plus seront supprimés automatiquement
+									au démarrage de l'application.
+								Laisser en blanc pour annuler la suppression automatique.</p>
+								<input class="input" type="hidden" name="action" value="def_annees_purge">
+								<input class="input" type="number" min="0" name="nb_annees" value="<?php echo $nb_annees_purge ?>">
 							</div>
 
 
-							<input class="ok" style="display: block" type="submit" value="Supprimer">
+							<input class="ok" style="display: block" type="submit" value="Valider changement">
 						</form>
 					</div>
 				</div>
@@ -727,14 +737,23 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		}
 	});
 
+
 	// On affiche le message
-	document.getElementById('div_message').innerHTML = "<?php echo $message_div; ?>";
+	var message = "<?php echo $message_div ?>";
+	var type = "<?php echo $type ?>";
+
+	if(message != ""){
+		Swal.fire(
+			message,
+			'',
+			type
+		)
+	}
 
 	// On l'efface 5 secondes plus tard
 	setTimeout(function() {
-		if(document.getElementById('div_message').innerHTML != ""){
-			document.getElementById('div_message').innerHTML = "";
-			<?php $message_div = NULL; ?>
+		if(message != ""){
+			message = "";
 		}
 	},5000);
 </script>

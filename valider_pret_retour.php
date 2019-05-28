@@ -7,11 +7,12 @@ if (isset($_GET['message'])) {
 }
 
 $message_div = "";
+$type = "";
 
-if($message == "vide") $message_div = "<div class='red'> Code ou Nom utilisateur/code radiopad invalide(s) </div>";
-if($message == "pret") $message_div = "<div class='green'> Prêt validé </div>";
-if($message == "retour") $message_div = "<div class='green'> Retour validé </div>";
-if($message == "pas_rendu") $message_div = "<div class='red'> Ce radiopad ne peut pas être prété/rendu par quelqu'un d'autre car il n'a pas encore été rendu </div>";
+if($message == "vide") {$message_div = "<div class='red'> Code ou Nom utilisateur/code radiopad invalide(s) </div>"; $type = "error";}
+if($message == "pret") {$message_div = "<div class='green'> Prêt validé </div>"; $type = "success";}
+if($message == "retour") {$message_div = "<div class='green'> Retour validé </div>"; $type = "success";}
+if($message == "pas_rendu") {$message_div = "<div class='red'> Ce radiopad ne peut pas être prété/rendu par quelqu'un d'autre car il n'a pas encore été rendu </div>"; $type = "error";}
 
 $nom_societe = NULL;
 $departement = NULL;
@@ -46,7 +47,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		<link rel='stylesheet' type='text/css' href='./css/valider_pret_retour.css' media='screen' />
 
 		<!-- Fichiers Javascripts -->
-		<script type='text/javascript' src='./js/web.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 		<!-- Encodage UTF8 pour les accents -->
 		<meta charset='UTF-8'>
@@ -158,23 +159,26 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 											$result_radios->close();
 ?>
 					</datalist>
-					<div id="overlay">
-						<div id="div_message">
-
-						</div>
-					</div>
-
 					<input class="valider_pret_retour" type="submit" value="Valider Prêt/Retour">
 			</form>
 
 			<script type="text/javascript">
 				// On affiche le message
-				document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
+				var message = "<?php echo $message_div ?>";
+				var type = "<?php echo $type ?>";
+
+				if(message != ""){
+					Swal.fire(
+					  message,
+					  '',
+					  type
+					)
+				}
 
 				// On l'efface 5 secondes plus tard
 				setTimeout(function() {
-					if(document.getElementById('div_message').innerHTML != ""){
-						document.getElementById('div_message').innerHTML = "";
+					if(message != ""){
+						message = "";
 						if("<?php echo $message ?>" == "pret" || "<?php echo $message ?>" == "retour"){
 							document.location.href = "index.php";
 						}

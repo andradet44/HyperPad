@@ -7,8 +7,8 @@ if (isset($_GET['message'])) {
 }
 
 $message_div = "";
-
-if($message == "insert_prob_ok") $message_div = "<div class='green'> Défaillance signalée </div>";
+$type = "";
+if($message == "insert_prob_ok") {$message_div = "<div class='green'> Votre Signalement a bien été pris en compte </div>"; $type = "success";}
 
 $nom_societe = NULL;
 $departement = NULL;
@@ -44,6 +44,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 		<!-- Fichiers Javascripts -->
 		<script type='text/javascript' src='./js/web.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 		<!-- Encodage UTF8 pour les accents -->
 		<meta charset='UTF-8'>
@@ -98,10 +99,6 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 <section class='section1'>
 				<div class="container">
 					<h3> Signaler une panne Radiopad </h3>
-
-					<div id="div_message">
-
-					</div>
 
 					<form action="problemes.php" method="post">
 
@@ -191,12 +188,21 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 			<script type="text/javascript">
 				// On affiche le message
-				document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
+				var message = "<?php echo $message_div ?>";
+				var type = "<?php echo $type ?>";
+
+				if(message != ""){
+					Swal.fire(
+						message,
+						'',
+						type
+					)
+				}
 
 				// On l'efface 5 secondes plus tard
 				setTimeout(function(){
-					if(document.getElementById('div_message').innerHTML != ""){
-						document.getElementById('div_message').innerHTML = "";
+					if(message != ""){
+						message = "";
 						document.location.href = "index.php";
 					}
 				},5000);

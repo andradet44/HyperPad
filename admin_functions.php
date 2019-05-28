@@ -2,6 +2,11 @@
 //Variables globales
 $id_magasin  = NULL;
 
+$first_config = NULL;
+if (isset($_GET['first_config'])) {
+	$first_config = $_GET['first_config'];
+}
+
 // Ouvre session
 session_start();
 // Récupère dans session
@@ -9,15 +14,19 @@ if (isset($_SESSION['id_magasin'])) {
 	$id_magasin = $_SESSION['id_magasin'];
 	$alias_magasin = $_SESSION['alias_magasin'];
 } else {
-	header("Location: index.php?message=vide");
+	if($first_config == NULL){
+		echo "non"; exit;
+		header("Location: index.php");
+	}
 }
 
 $action = NULL;
 if (isset($_POST['action'])) {
 	$action = $_POST['action'];
 }
-
-
+if (isset($_GET['action'])) {
+	$action = $_GET['action'];
+}
 
 // Paramètres de connexion
 include_once("dbConfig.php");
@@ -25,10 +34,13 @@ include_once("dbConfig.php");
 // Ouverture connexion
 $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
+
 if($action == "add_fournisseur"){
 	add_fournisseur();
 } else if($action == "sup_avant_date"){
 	sup_avant_date();
+} else if($action == "def_annees_purge"){
+	def_annees_purge();
 } else if($action == "add_user"){
 	add_user();
 } else if($action == "del_user"){
@@ -100,11 +112,11 @@ function add_fournisseur(){
 }
 
 function sup_avant_date(){
-	global $id_magasin, $mysqli;
+	global $id_magasin, $mysqli, $first_config;
 	$sup_avant_date = NULL;
 
-	if (isset($_POST['nb_annees'])) {
-		$nb_annees = $_POST['nb_annees'];
+	if (isset($_GET['nb_annees'])) {
+		$nb_annees = $_GET['nb_annees'];
 		$sup_avant_date = date('d/m/Y', strtotime('-' . $nb_annees . ' year'));
 		$sup_avant_date = format_date($sup_avant_date);
 	} else{
@@ -116,22 +128,58 @@ function sup_avant_date(){
 
 
 	if($sup_avant_date == NULL){
-		header("Location: admin.php?message=del_ko");
+		if($first_config == NULL){
+			header("Location: admin.php?message=del_ko");
+		} else{
+			header("Location: index.php");
+		}
 	} else {
-
-		$query_sup_avant_date = "DELETE FROM `prets` WHERE `id_magasin`='$id_magasin' AND `date_pret` <= '$sup_avant_date 00:00:00';";
+		$query_sup_avant_date = "DELETE FROM `prets` WHERE `id_magasin`='$id_magasin' AND `date_pret` <= '$sup_avant_date 23:59:59';";
 		$result = $mysqli->query($query_sup_avant_date);
 
 		$nbLignes = $mysqli->affected_rows;
 
 
 		if($result && $nbLignes != 0){
-			header("Location: admin.php?message=sup_avant_date_ok&result=$nbLignes");
+			if($first_config == NULL){
+				header("Location: admin.php?message=sup_avant_date_ok&result=$nbLignes");
+			} else{
+				header("Location: index.php");
+			}
 		} else{
-			header("Location: admin.php?message=pas_pret");
+			if($first_config == NULL){
+				header("Location: admin.php?message=pas_pret");
+			} else{
+				header("Location: index.php");
+			}
 		}
 
 	}
+}
+
+function def_annees_purge(){
+	global $id_magasin, $mysqli;
+
+	if (isset($_POST['nb_annees'])) {
+		$nb_annees = $_POST['nb_annees'];
+	}
+
+	// Ouvre session
+	session_start();
+	$_SESSION['nb_annees_purge'] = $nb_annees;
+
+	$query_set_nb_purge = "UPDATE `parametres` SET `nombre_annees_purge` = '$nb_annees' WHERE `id_magasin` = '$id_magasin';";
+	$result = $mysqli->query($query_set_nb_purge);
+
+	$nbLignes = $mysqli->affected_rows;
+
+
+	if($result && $nbLignes != 0){
+		header("Location: admin.php?message=set_purge_ok");
+	} else{
+		header("Location: admin.php");
+	}
+
 }
 
 function add_user(){

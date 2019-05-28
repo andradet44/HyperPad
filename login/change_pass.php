@@ -22,9 +22,9 @@ if (isset($_GET['message'])) {
 	$message = $_GET['message'];
 }
 
-if($message == 'loginORmdp') $message_div = "<div class='red'> Login et/ou mot de passe invalide(s) </div>";
-if($message == 'error')  $message_div = "<div class='red'> Vérifiez votre saisie </div>";
-if($message == 'mdp')  $message_div = "<div class='red'> Les mots de passes ne correspondent pas </div>";
+if($message == 'loginORmdp') {$message_div = "<div class='red'> Login et/ou mot de passe invalide(s) </div>"; $type = "error";}
+if($message == 'error')  {$message_div = "<div class='red'> Vérifiez votre saisie </div>"; $type = "error";}
+if($message == 'mdp')  {$message_div = "<div class='red'> Les mots de passes ne correspondent pas </div>"; $type = "error";}
 
 if($pwd != $pwdConfirm){
 	header('Location: change_pass.php?message=mdp');
@@ -73,7 +73,7 @@ if($nbLignes > 0){
 	$_SESSION['user_id'] = $user_id;
 	$_SESSION['login'] = $login;
 
-	header("Location: ../admin.php");
+	header("Location: ../admin.php?message=changed");
 }
 
 // Fermeture connection
@@ -103,6 +103,7 @@ $mysqli->close();
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 <!--===============================================================================================-->
+<script src="../js/sweetalert/dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	<div class="limiter">
@@ -116,9 +117,6 @@ $mysqli->close();
 				<form class="login100-form validate-form" action="change_pass.php" method="post" >
 					<span class="login100-form-title">
 						<?php echo "<h2 onclick="."document.location.href="."'../index.php' style='color: red; cursor: pointer'> Ficopad Gestion </h2>"; ?>
-						<div style='color: red; font-size: 15px; margin-top: 5px;' id="div_message">
-
-						</div>
 					</span>
 
 
@@ -186,12 +184,21 @@ $mysqli->close();
 
 	<script type="text/javascript">
 		// On affiche le message
-		document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
+		var message = "<?php echo $message_div ?>";
+		var type = "<?php echo $type ?>";
+
+		if(message != ""){
+			Swal.fire(
+				message,
+				'',
+				type
+			)
+		}
 
 		// On l'efface 5 secondes plus tard
 		setTimeout(function() {
-			if(document.getElementById('div_message').innerHTML != ""){
-				document.getElementById('div_message').innerHTML = "";
+			if(message != ""){
+				message = "";
 			}
 		},5000);
 	</script>

@@ -4,8 +4,11 @@ if (isset($_GET['message'])) {
 	$message = $_GET['message'];
 }
 
-if($message == "insert_prob_ok") $message_div = "<div class='green'> Panne enregistrée </div>";
-if($message == "reparation_ok") $message_div = "<div class='green'> Réparation enregistrée </div>";
+
+$type = "";
+$message_div = "";
+if($message == "insert_prob_ok") {$message_div = "<div class='green'> Panne enregistrée </div>"; $type = "success";}
+if($message == "reparation_ok") {$message_div = "<div class='green'> Réparation enregistrée </div>"; $type = "success";}
 
 
 // Paramètres de connexion
@@ -27,6 +30,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		<!-- Fichiers Javascripts -->
 		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
 		<script type='text/javascript' src='./js/tri-donnees.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 
 		<!-- Encodage UTF8 pour les accents -->
@@ -56,7 +60,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 		<h2 class="section_title"> Liste des défaillances signalés </h2>
 
-		
+
 <?php
 $nom_societe = NULL;
 $departement = NULL;
@@ -80,9 +84,6 @@ if($nom_societe != NULL && $departement != NULL){
 	echo "<h2> $nom_societe $departement </h2>";
 
 	echo "
-	<div id='div_message'>
-	</div>
-
 	<table class='tab_search avectri'>
 	<thead>
 	<tr class='th'>
@@ -148,12 +149,21 @@ if($nom_societe != NULL && $departement != NULL){
 
 <script type="text/javascript">
 	// On affiche le message
-	document.getElementById('div_message').innerHTML = "<?php echo $message_div ?>";
+	var message = "<?php echo $message_div ?>";
+	var type = "<?php echo $type ?>";
+
+	if(message != ""){
+		Swal.fire(
+			message,
+			'',
+			type
+		)
+	}
 
 	// On l'efface 5 secondes plus tard
 	setTimeout(function() {
-		if(document.getElementById('div_message').innerHTML != ""){
-			document.getElementById('div_message').innerHTML = "";
+		if(message != ""){
+			message = "";
 		}
 	},5000);
 
