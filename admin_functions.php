@@ -164,17 +164,15 @@ function def_annees_purge(){
 		$nb_annees = $_POST['nb_annees'];
 	}
 
-	// Ouvre session
-	session_start();
+	if($nb_annees == "") $nb_annees = "NULL";
+
 	$_SESSION['nb_annees_purge'] = $nb_annees;
 
 	$query_set_nb_purge = "UPDATE `parametres` SET `nombre_annees_purge` = '$nb_annees' WHERE `id_magasin` = '$id_magasin';";
 	$result = $mysqli->query($query_set_nb_purge);
 
-	$nbLignes = $mysqli->affected_rows;
 
-
-	if($result && $nbLignes != 0){
+	if($result){
 		header("Location: admin.php?message=set_purge_ok");
 	} else{
 		header("Location: admin.php");
