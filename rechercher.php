@@ -65,7 +65,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin  == NULL){
 include_once("dbConfig.php");
 
 // Ouverture connexion
-$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
+$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($mysqli, "utf8");
 
 ?>
 
@@ -155,7 +155,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 					<datalist id="userCodes">
 <?php
 											//Requete sql
-											$query_users = "SELECT * FROM `utilisateurs` WHERE `id_magasin` = '$id_magasin';";
+											$query_users = "SELECT * FROM `utilisateurs` WHERE `id_magasin` = '$id_magasin' ORDER BY `nom`, `prenom` ASC;";
 											//On lance la requete en base de données
 											$result_users = $mysqli->query($query_users);
 

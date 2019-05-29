@@ -1,5 +1,4 @@
 <?php
-//TODO: proposer que les radiopads qui sont disponibles en fonctions de leurs etat
 //Permet d'afficher des messages
 $message = NULL;
 if (isset($_GET['message'])) {
@@ -34,7 +33,7 @@ if (isset($_SESSION['departement'])) {
 include_once("dbConfig.php");
 
 // Ouverture connexion
-$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
+$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($mysqli, "utf8");
 ?>
 
 <!DOCTYPE html>
@@ -83,7 +82,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 				echo "<h2> $nom_societe $departement </h2>";
 
 
-				$query_id_soc = "SELECT * FROM `magasins` WHERE `departement` = '$departement' AND `nom`='$nom_societe';";
+				$query_id_soc = "SELECT * FROM `magasins` WHERE `departement` = '$departement' AND `nom`='$nom_societe'";
 				$result_id_soc = $mysqli->query($query_id_soc);
 
 				if($result_id_soc){
@@ -115,7 +114,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 											$fournisseurs = [];
 											$i = 0;
 											//Requete sql
-											$query_users = "SELECT * FROM `utilisateurs` WHERE `id_magasin` = '$id_magasin';";
+											$query_users = "SELECT * FROM `utilisateurs` WHERE `id_magasin` = '$id_magasin' ORDER BY `nom`, `prenom` ASC;";
 											//On lance la requete en base de données
 											$result_users = $mysqli->query($query_users);
 

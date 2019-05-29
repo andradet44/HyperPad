@@ -20,7 +20,7 @@ if (isset($_POST['id_magasin'])) {
 include_once("dbConfig.php");
 
 // Ouverture connexion
-$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
+$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($mysqli, "utf8");
 
 //récupération des informations du magasin
 $query_magasins = "SELECT * FROM `magasins` WHERE `departement` = '$departement' AND `nom` = '$nom_societe';";

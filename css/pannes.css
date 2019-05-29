@@ -10,14 +10,6 @@
 	font-size: 20px;
 }
 
-input{
-	display: inline-block;
-	margin-left: 30px;
-	margin-right: 20%;
-	margin-bottom: 20px;
-	margin-top: 20px;
-}
-
 .input{
 	height: 40px;
 	border-style: none;
@@ -26,6 +18,14 @@ input{
 	border: 0;
 	border-radius: 6px;
 	text-align: center;
+}
+
+input{
+	display: inline-block;
+	margin-left: 30px;
+	margin-right: 20%;
+	margin-bottom: 20px;
+	margin-top: 20px;
 }
 
 

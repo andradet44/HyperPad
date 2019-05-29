@@ -4,7 +4,7 @@ include_once("send_mail.php");
 // Paramètres de connexion
 include_once("dbConfig.php");
 // Ouverture connexion
-$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
+$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($mysqli, "utf8");
 
 //On récupère les paramètres en base de données
 $query_parametre = "SELECT * FROM `parametres`;";

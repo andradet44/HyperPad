@@ -32,7 +32,7 @@ if (isset($_SESSION['id_magasin'])) {
 include_once("dbConfig.php");
 
 // Ouverture connexion
-$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
+$mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($mysqli, "utf8");
 
 //On vérifie que l'utilisateur et le code radiopad sont bien présents en base de données
 $query_verifier_code = "SELECT * FROM `radiopads` WHERE `id_radio` = '$radio_code' AND `id_magasin` = '$id_magasin'";
