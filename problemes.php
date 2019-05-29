@@ -39,7 +39,11 @@ if($id_magasin == NULL){
     reparation();
   } else if($action == "panne"){
 		insert_prob();
+	} else if($action == "sup_defaillance"){
+		sup_defaillance();
 	}
+
+
 
   // Fermeture connection
   $mysqli->close();
@@ -165,6 +169,26 @@ function reparation(){
     header("Location: pannes.php?message=reparation_ok");
   }
 
+}
+
+function sup_defaillance(){
+  global $id_magasin, $mysqli;
+
+	$id_radio = NULL;
+	if (isset($_POST['code_radio'])) {
+		$id_radio = $_POST['code_radio'];
+	}
+
+	$type_panne = NULL;
+	if (isset($_POST['type_panne'])) {
+		$type_panne = $_POST['type_panne'];
+	}
+
+
+	$query_delete = "DELETE FROM `defaillances_radiopads` WHERE `id_radiopad` = '$id_radio' AND `id_magasin` = '$id_magasin' AND `panne` = '$type_panne'";
+	$mysqli->query($query_delete);
+
+	header("Location: defaillances.php?message=delete_panne_ok");
 }
 
 ?>

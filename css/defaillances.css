@@ -23,6 +23,14 @@
 	cursor: pointer;
 }
 
+#sup_def{
+  background: red;
+}
+
+#sup_def:hover{
+  background: #DA5402;
+}
+
 .action:hover{
 	background-color: #1b5790;
 }
@@ -48,7 +56,7 @@ h2{
 }
 
 th, td{
-  width: 33%;
+  width: 29%;
 }
 
 .panne_reparation{

@@ -9,6 +9,7 @@ $type = "";
 $message_div = "";
 if($message == "insert_prob_ok") {$message_div = "<div class='green'> Panne enregistrée </div>"; $type = "success";}
 if($message == "reparation_ok") {$message_div = "<div class='green'> Réparation enregistrée </div>"; $type = "success";}
+if($message == "delete_panne_ok") {$message_div = "<div class='green'> Panne Supprimée </div>"; $type = "success";}
 
 
 // Paramètres de connexion
@@ -116,7 +117,7 @@ if($nom_societe != NULL && $departement != NULL){
 					echo "<td class='color'> $panne </td>";
 					echo "<td class='color'> $date_panne </td>";
 					echo "<td class='td_action'>
-					<form action='problemes.php' method='post'>
+					<form action='problemes.php' method='post' style='display: inline-block;'>
 						<input style='display: none' type='text' name='code_radio' value='$id_radio'>
 						<input style='display: none' type='text' name='type_panne' value='$panne'>
 						<input style='display: none' type='text' name='date_panne' value='$date_panne'>
@@ -124,19 +125,22 @@ if($nom_societe != NULL && $departement != NULL){
 						<input class='action' type='submit' value='Valider Panne'>
 					</form>
 					</td>";
+
+					echo "<td class='td_action'>
+					<form action='problemes.php' method='post' style='display: inline-block;'>
+						<input style='display: none' type='text' name='code_radio' value='$id_radio'>
+						<input style='display: none' type='text' name='type_panne' value='$panne'>
+						<input style='display: none' type='text' name='date_panne' value='$date_panne'>
+						<input style='display: none' type='text' name='action' value='sup_defaillance'>
+						<input class='action' id='sup_def' type='submit' value='Supprimer'>
+					</form>
+					</td>";
 					echo "</tr>";
 				}
 
+
+
 		$result_prob_radio->close();
-	} else {
-		echo "<tr>";
-		echo "<td style='color: white;' > . </td>";
-		echo "<td >  </td>";
-		echo "<td >  </td>";
-		echo "<td style='color: white; background: white'>
-			<input style='color: white; background: white; border-style: none;' type='submit' value='Valider Réparation'>
-		 </td>";
-		echo "</tr>";
 	}
 
 		echo "

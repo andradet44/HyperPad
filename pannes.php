@@ -155,16 +155,6 @@ if($nom_societe != NULL && $departement != NULL){
 				}
 
 		$result_prob_radio->close();
-	} else {
-		echo "<tr>";
-		echo "<td style='color: white;' > . </td>";
-		echo "<td >  </td>";
-		echo "<td >  </td>";
-		echo "<td >  </td>";
-		echo "<td style='color: white; background: white'>
-			<input style='color: white; background: white; border-style: none;' type='submit' value='Valider Réparation'>
-		 </td>";
-		echo "</tr>";
 	}
 
 		echo "

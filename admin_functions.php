@@ -80,6 +80,7 @@ function add_fournisseur(){
 	$societe_fournisseur = NULL;
 	if (isset($_POST['societe_fournisseur'])) {
 		$societe_fournisseur = $_POST['societe_fournisseur'];
+		$societe_fournisseur = strtoupper($societe_fournisseur);
 	}
 	$nom = NULL;
 	if (isset($_POST['nom'])) {
@@ -91,6 +92,7 @@ function add_fournisseur(){
 		$prenom = $_POST['prenom'];
 	}
 
+
 	if($societe_fournisseur == NULL){
 		header("Location: admin.php?message=add_ko");
 	} else {
@@ -98,14 +100,27 @@ function add_fournisseur(){
 			$nom = $societe_fournisseur;
 		}
 
-		$query_insert_user = "INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `fonction`, `secteur`, `id_magasin`, `non_rendu`)
-		VALUES (NULL, '$nom', '$prenom', 'FOURNISSEUR', '$societe_fournisseur', '$id_magasin', '0');";
-		$result = $mysqli->query($query_insert_user);
+		$query_verify_exist = "SELECT * FROM `utilisateurs` WHERE `nom` = '$nom' AND `prenom` = '$prenom' AND `fonction` =  'FOURNISSEUR' AND `id_magasin` = '$id_magasin';";
+		$result_verify = $mysqli->query($query_verify_exist);
+		if($result_verify){
+			$nb_results = $result_verify->num_rows;
+			$result_verify->close();
+		} else {
+			$nb_results = 0;
+		}
+
+		if($nb_results == 0){
+			$query_insert_user = "INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `fonction`, `secteur`, `id_magasin`, `non_rendu`)
+			VALUES (NULL, '$nom', '$prenom', 'FOURNISSEUR', '$societe_fournisseur', '$id_magasin', '0');";
+			$result = $mysqli->query($query_insert_user);
+		} else{
+			header("Location: admin.php?message=add_fournisseur_ko");
+		}
+
+
 
 		if($result){
 			header("Location: admin.php?message=add_fournisseur_ok");
-		} else{
-			header("Location: admin.php?message=add_fournisseur_ko");
 		}
 
 	}
@@ -333,12 +348,25 @@ function add_plage_radio(){
 	} else{
 		$n = 0;
 		for ($i=$code_radio1; $i <= $code_radio2; $i++) {
-			$query_insert_user = "INSERT INTO `radiopads` (`id_radio`, `date_achat`, `id_magasin`) VALUES ('$i', '0', '$id_magasin');";
-			$result = $mysqli->query($query_insert_user);
+			//On vérifie si le radiopad existe déjà
+			$query_verify_exist = "SELECT * FROM `radiopads` WHERE `id_radio` = '$i' AND `id_magasin` = '$id_magasin';";
+			$result_verify = $mysqli->query($query_verify_exist);
+			if($result_verify){
+				$nb_results = $result_verify->num_rows;
+				$result_verify->close();
+			} else {
+				$nb_results = 0;
+			}
+
+			if($nb_results == 0){
+				$query_insert_user = "INSERT INTO `radiopads` (`id_radio`, `etat`, `date_achat`, `id_magasin`) VALUES ('$i', 'PROD',  '0', '$id_magasin');";
+				$result = $mysqli->query($query_insert_user);
+			}
+
 			if($result) $n +=1;
 		}
 
-		header("Location: admin.php?message=add_radio_plage_ok?nb_radio=$n");
+		header("Location: admin.php?message=add_radio_plage_ok&nb_radio=$n");
 	}
 
 }

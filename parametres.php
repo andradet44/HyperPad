@@ -151,10 +151,11 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 						<label> Adresse E-mail de l'admin : </label>
 						<input type='text' name='mail_admin' value='$mail_admin'>
 					</div>
+					<input onclick=" . '"' . "document.location.href='index.php'" . '"' . "type='button' id='annuler_modal' value='Annuler'>
 				<input type='submit' id='valider_modal' value='Valider'>
 			</form>
 			</div>
-			<p style='color: red'> HyperPad V. 1.0  </p>
+			<p style='color: red'> HyperPad V. 1.1  </p>
 		</div>
 	</div>
 		" ;

@@ -102,6 +102,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 				$batterie = $radio['batterie'];
 				$batterie = format_date($batterie);
 
+				$etat_affichage = "";
 				if($etat == 'PROD') $etat_affichage = "<option style='color: red' value='PROD' selected='selected'> En PROD </option>";
 				if($etat == 'STOCK') $etat_affichage = "<option style='color: red' value='STOCK' selected='selected'> En Stock</option>";
 				if($etat == 'REPARATION') $etat_affichage = "<option style='color: red' value='REPARATION' selected='selected'> En Réparation </option>";
@@ -126,7 +127,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 				</select>
 				</td>";
 				echo "<td class='color'> <input class='input' type='text' name='affectation1$radio_code' value='$affectation'> </td>";
-				echo "<td class='color'> <input class='input' type='date' name='nouv_batterie1$radio_code' value='$batterie'> </td>";
+				echo "<td class='color'> <input class='input' type='text' name='nouv_batterie1$radio_code' value='$batterie'> </td>";
 				echo "<td class='td_action color'>
 								<form action='admin_functions.php' method='post'>
 									<input type='hidden' id='etat1$radio_code' name='etat' value='$etat'>
@@ -170,6 +171,13 @@ function format_date($date){
 
 <script type="text/javascript">
 	jQuery('input').keyup(function() {
+		var name = jQuery(this).attr('name');
+		var valeur = jQuery(this).val();
+
+		jQuery('#'+name).val(valeur);
+	});
+
+	jQuery('.input').keyup(function() {
 		var name = jQuery(this).attr('name');
 		var valeur = jQuery(this).val();
 

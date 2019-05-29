@@ -230,7 +230,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 						<h3> Ajouter un utilisateur </h3>
 
-						<form  id="0" action="admin_functions.php" method="post">
+						<form action="admin_functions.php"  method="post">
 							<label class="place_holder" for="fournisseur"> S'agit t'il d'un fournisseur ?
 								<select class="input" id="fournisseur" name="fournisseur">
 									<option value="NON"> Non </option>
@@ -600,8 +600,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 								</datalist>
 							</div>
 
-							<input class="ok"  style="display: block;" type="button" onclick='show_message()' value="Supprimer Magasin">
-							<!-- <button  class="ok" style="display: block; margin-left: 30px; margin-top: 30px;" type="button" name="button">  </button> -->
+							<input class="ok"  style="display: block;" type="submit" value="Supprimer Magasin">
 
 						</form>
 
@@ -610,7 +609,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 		</section>
 
-		<div id='message' id='popup1' class='overlay'>
+		<div style="display: none" id='message' id='popup1' class='overlay'>
 			<div class='popup'>
 				<div class='content'>
 					<h2> En supprimant un magasin, vous supprimez aussi toutes les données liées a celui-ci. </h2>
@@ -623,13 +622,80 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		</div>
 
 <script type="text/javascript">
+var societe_fournisseur = jQuery("#societe_fournisseur");
+societe_fournisseur.removeAttr('required');
+
+
+jQuery("#fournisseur").click(function() {
+	var valeur = jQuery(this).val();
+	var code_user = 	jQuery("#user_code");
+	var label_code_user = jQuery("#label_user_code");
+
+	var fonction = 	jQuery("#fonction");
+	var label_fonction = jQuery("#label_fonction");
+
+	var secteur = 	jQuery("#secteur");
+	var label_secteur = jQuery("#label_secteur");
+
+	var nom = jQuery("#nom");
+	var prenom = jQuery("#prenom");
+
+	var label_societe_fournisseur = jQuery("#label_societe_fournisseur");
+	var societe_fournisseur = jQuery("#societe_fournisseur");
+
+	var action_user = jQuery("#action_user");
+
+	if(valeur == "OUI"){
+		action_user.val('add_fournisseur');
+
+		code_user.hide();
+		code_user.removeAttr('required');
+		label_code_user.hide();
+
+		fonction.hide();
+		fonction.removeAttr('required');
+		label_fonction.hide();
+
+		secteur.hide();
+		secteur.removeAttr('required');
+		label_secteur.hide();
+
+		nom.removeAttr('required');
+		prenom.removeAttr('required');
+
+		label_societe_fournisseur.show();
+		societe_fournisseur.show();
+	} else if(valeur == "NON"){
+		action_user.val('add_user');
+
+		code_user.show();
+		code_user.attr('required', '');
+		label_code_user.show();
+
+		fonction.show();
+		fonction.attr('required', '');
+		label_fonction.show();
+
+		secteur.show();
+		secteur.attr('required', '');
+		label_secteur.show();
+
+		nom.attr('required', '');
+		prenom.attr('required', '');
+
+		label_societe_fournisseur.hide();
+		societe_fournisseur.hide();
+	}
+});
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	shown = false;
 	sent = false;
 	message = jQuery("#message");
-	message.hide();
 
 	function show_message(key){
-	console.log('show');
 		var valeur = jQuery("#id_magasin").val();
 		if(valeur == ''){
 
@@ -647,8 +713,8 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 	}
 
 	function confirm_form(){
+		console.log("smlks");
 		if(shown == false){
-			console.log('false');
 			shown = true;
 			show_message();
 		} else if(sent == false){
@@ -657,6 +723,8 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 			sent = true;
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if(!"<?php echo $message_div; ?>"){
 		jQuery("h1").parent().children('div').toggle();
@@ -675,70 +743,10 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 		}
 	});
 
-	jQuery("#fournisseur").click(function() {
-		var valeur = jQuery(this).val();
-		var code_user = 	jQuery("#user_code");
-		var label_code_user = jQuery("#label_user_code");
 
-		var fonction = 	jQuery("#fonction");
-		var label_fonction = jQuery("#label_fonction");
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		var secteur = 	jQuery("#secteur");
-		var label_secteur = jQuery("#label_secteur");
-
-		var nom = jQuery("#nom");
-		var prenom = jQuery("#prenom");
-
-		var label_societe_fournisseur = jQuery("#label_societe_fournisseur");
-		var societe_fournisseur = jQuery("#societe_fournisseur");
-
-		var action_user = jQuery("#action_user");
-
-		if(valeur == "OUI"){
-			action_user.val('add_fournisseur');
-
-			code_user.hide();
-			code_user.removeAttr('required');
-			label_code_user.hide();
-
-			fonction.hide();
-			fonction.removeAttr('required');
-			label_fonction.hide();
-
-			secteur.hide();
-			secteur.removeAttr('required');
-			label_secteur.hide();
-
-			nom.removeAttr('required');
-			prenom.removeAttr('required');
-
-			label_societe_fournisseur.show();
-			societe_fournisseur.show();
-		} else if(valeur == "NON"){
-			action_user.val('add_user');
-
-			code_user.show();
-			code_user.attr('required', '');
-			label_code_user.show();
-
-			fonction.show();
-			fonction.attr('required', '');
-			label_fonction.show();
-
-			secteur.show();
-			secteur.attr('required', '');
-			label_secteur.show();
-
-			nom.attr('required', '');
-			prenom.attr('required', '');
-
-			label_societe_fournisseur.hide();
-			societe_fournisseur.hide();
-		}
-	});
-
-
-	// On affiche le message
+	// On affiche les messages
 	var message = "<?php echo $message_div ?>";
 	var type = "<?php echo $type ?>";
 

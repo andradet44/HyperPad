@@ -221,12 +221,12 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 						//Transforme le format date en français en format date en anglais
 						$search_date_pret = format_date($search_date_pret);
 
-						$query_search = "SELECT * FROM `prets` WHERE `date_pret` LIKE '%$search_date_pret%' AND `id_magasin` = '$id_magasin';";
+						$query_search = "SELECT * FROM `prets` WHERE `date_pret` LIKE '%$search_date_pret%' AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC;";
 
 						if($search_date_pret2 != NULL){
 							$search_date_pret2 = format_date($search_date_pret2);
 							$query_search = "SELECT * FROM `prets` WHERE `date_pret` between '$search_date_pret 00:00:00' AND '$search_date_pret2 23:59:59'
-							AND `id_magasin` = '$id_magasin';";
+							AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC;";
 						}
 
 						$msg_search = "";
@@ -234,12 +234,12 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 						//Transforme le format date en français en format date en anglais
 						$search_date_retour = format_date($search_date_retour);
 
-						$query_search = "SELECT * FROM `prets` WHERE `date_retour` LIKE '%$search_date_retour%' AND `id_magasin` = '$id_magasin'";
+						$query_search = "SELECT * FROM `prets` WHERE `date_retour` LIKE '%$search_date_retour%' AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC;";
 
 						if($search_date_retour2 != NULL){
 							$search_date_retour2 = format_date($search_date_retour2);
 							$query_search = "SELECT * FROM `prets` WHERE `id_magasin` = '$id_magasin' AND `date_retour`
-							between '$search_date_retour 00:00:00' AND '$search_date_retour2 23:59:59';";
+							between '$search_date_retour 00:00:00' AND '$search_date_retour2 23:59:59' ORDER BY `date_pret` DESC;";
 						}
 
 
@@ -250,11 +250,11 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 							if (preg_replace('~\D~', '', $user_code) != ""){
 								$user_code = preg_replace('~\D~', '', $user_code);
 								$query_search = "SELECT * FROM `prets` WHERE `id_utilisateur` = '$user_code'
-								AND `id_radiopad` = '$radio_code' AND `id_magasin` = '$id_magasin'";
+								AND `id_radiopad` = '$radio_code' AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC";
 							} else if (preg_replace('~\D~', '', $user_code) == ""){
 								$query_search = "SELECT * FROM `prets` INNER JOIN `utilisateurs` ON `prets`.`id_utilisateur` = `utilisateurs`.`id`
 								 WHERE `id_radiopad` = '$radio_code' AND `prets`.`id_magasin` = '$id_magasin'
-								 AND (`nom` LIKE '%$user_code%' OR `prenom` LIKE '%$user_code%');";
+								 AND (`nom` LIKE '%$user_code%' OR `prenom` LIKE '%$user_code%') ORDER BY `date_pret` DESC;";
 							} else{
 								$query_search = "";
 							}
@@ -262,16 +262,18 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 							//Recherche par code utilisateur seulement
 							if (preg_replace('~\D~', '', $user_code) != ""){
 								$user_code = preg_replace('~\D~', '', $user_code);
-								$query_search = "SELECT * FROM `prets` WHERE `id_utilisateur` = '$user_code' AND `id_magasin` = '$id_magasin'";
+								$query_search = "SELECT * FROM `prets` WHERE `id_utilisateur` = '$user_code' AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC;";
 							} else if (preg_replace('~\D~', '', $user_code) == ""){
 								$query_search = "SELECT * FROM `prets` INNER JOIN `utilisateurs` ON `prets`.`id_utilisateur` = `utilisateurs`.`id`
-								WHERE `prets`.`id_magasin` = '$id_magasin' AND `nom` LIKE '%$user_code%' OR `prenom` LIKE '%$user_code%';";
+								WHERE `prets`.`id_magasin` = '$id_magasin' AND `nom` LIKE '%$user_code%' OR `prenom` LIKE '%$user_code%' ORDER BY `date_pret` DESC;";
 							} else{
 								$query_search = "";
 							}
 						} else if(($user_code == "" || $user_code == NULL) && $radio_code != "" && $radio_code != NULL){
 							//Recherche par code radiopad seulement
-							$query_search = "SELECT * FROM `prets` WHERE `id_radiopad` = '$radio_code' AND `id_magasin` = '$id_magasin'";
+							$query_search = "SELECT * FROM `prets` WHERE `id_radiopad` = '$radio_code' AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC";
+						} else{
+							$query_search = "";
 						}
 						$msg_search = "";
 					} else {
@@ -331,7 +333,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 
 
 					//Recherches simples
-					$query_all = "SELECT * FROM `prets`";
+					$query_all = "SELECT * FROM `prets` ORDER BY `date_pret` DESC";
 					$result_all = $mysqli->query($query_all);
 
 					if(isset($result_all)){
@@ -344,18 +346,18 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME);
 							if($search == "pret_jour"){
 								$query_search = "SELECT * FROM `prets` WHERE (SELECT DATEDIFF(CURRENT_TIMESTAMP,
 									(SELECT `date_pret` FROM `prets` WHERE `id` = '$actual_id'))) = 0 AND `id` = '$actual_id'
-									AND `id_magasin` = '$id_magasin';";
+									AND `id_magasin` = '$id_magasin' ORDER BY `date_pret` DESC;";
 								$msg_search = "afficher tout";
 							} else if($search == "pret_sans_retour"){
 								$query_search = "SELECT * FROM `prets` WHERE (SELECT DATEDIFF(CURRENT_TIMESTAMP,
 									(SELECT `date_pret` FROM `prets` WHERE `id` = '$actual_id'))) = 0 AND `id` = '$actual_id' AND
-									`id_magasin` = '$id_magasin' AND `date_retour` = '0000-00-00 00:00:00';";
+									`id_magasin` = '$id_magasin' AND `date_retour` = '0000-00-00 00:00:00' ORDER BY `date_pret` DESC;";
 								$msg_search = "Afficher tous les prêts sans retour";
 
 							} else	if($search == "pret_avec_retour"){
 								$query_search = "SELECT * FROM `prets` WHERE (SELECT DATEDIFF(CURRENT_TIMESTAMP,
 									(SELECT `date_pret` FROM `prets` WHERE `id` = '$actual_id'))) = 0 AND `id` = '$actual_id' AND
-									`id_magasin` = '$id_magasin' AND `date_retour` != '0000-00-00 00:00:00';";
+									`id_magasin` = '$id_magasin' AND `date_retour` != '0000-00-00 00:00:00' ORDER BY `date_pret` DESC;";
 								$msg_search = "Afficher tous les prêts avec retour ";
 
 							} else {
