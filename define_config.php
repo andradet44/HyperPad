@@ -11,6 +11,10 @@ $mail_admin = NULL;
 if (isset($_POST['mail_admin'])) {
 	$mail_admin = $_POST['mail_admin'];
 }
+$ip_reseau = NULL;
+if (isset($_POST['ip_reseau'])) {
+	$ip_reseau = $_POST['ip_reseau'];
+}
 $id_magasin = NULL;
 if (isset($_POST['id_magasin'])) {
 	$id_magasin = $_POST['id_magasin'];
@@ -50,17 +54,22 @@ if($result_par){
 	$nb_par = 0;
 }
 
-$client_IP = $_SERVER['REMOTE_ADDR'];
+
 if($nb_par == 0){
 	//On insére les nouveaux paramètres
-	$query_insert = "INSERT INTO `parametres` (`id`, `id_magasin`, `ip_client`, `nom_societe`, `departement`, `alias_magasin`, `mail_admin`)
-	VALUES (NULL, '$id_magasin', '$client_IP', '$nom_societe', '$departement', '$alias_magasin', '$mail_admin');";
+	$query_insert = "INSERT INTO `parametres` (`id`, `id_magasin`, `ip_reseau`, `nom_societe`, `departement`, `alias_magasin`, `mail_admin`)
+	VALUES (NULL, '$id_magasin', '$ip_reseau', '$nom_societe', '$departement', '$alias_magasin', '$mail_admin');";
 	$mysqli->query($query_insert);
 } else if($nb_par > 0){
-	$query_update0 = "UPDATE `parametres` SET `ip_client` = '' WHERE `ip_client` = '$client_IP';";
-	$mysqli->query($query_update0);
+	$tab_ip = explode(',', $ip_reseau);
 
-	$query_update1 = "UPDATE `parametres` SET `ip_client` = '$client_IP' WHERE `id_magasin` = '$id_magasin';";
+	foreach ($tab_ip as $ip) {
+		//Suppression de l'adresse IP dans les autres lignes
+		$query_update0 = "UPDATE `parametres` SET `ip_reseau` = '' WHERE `ip_reseau` LIKE '%$ip%';";
+		$mysqli->query($query_update0);
+	}
+
+	$query_update1 = "UPDATE `parametres` SET `ip_reseau` = '$ip_reseau' WHERE `id_magasin` = '$id_magasin';";
 	$mysqli->query($query_update1);
 
 	$query_update2 = "UPDATE `parametres` SET `mail_admin` = '$mail_admin' WHERE `id_magasin` = '$id_magasin';";

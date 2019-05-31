@@ -142,11 +142,19 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 							$result_mail->close();
 						}
 					} else {
-						$mail_admin = '';
+						$mail_admin = NULL;
+						$ip_reseau = NULL;
 					}
 
 					echo "</select>
 					</div>
+
+					<div class='ip_reseau'>
+						<label> Adresse Réseau avec masque (ex : 10.100.101.0/24) : </label>
+						<p style='color: red'> Pour saisir plusieurs adresses réseau, veuillez les séparer par des virgules </p>
+						<textarea rows='3' cols='80' name='ip_reseau' placeholder='10.100.100.0/24, 10.100.101.0/24, 10.100.102.0/24'>$ip_reseau</textarea>
+					</div>
+
 					<div class='mail'>
 						<label> Adresse E-mail de l'admin : </label>
 						<input type='text' name='mail_admin' value='$mail_admin'>
