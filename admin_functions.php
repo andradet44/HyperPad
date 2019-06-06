@@ -15,7 +15,6 @@ if (isset($_SESSION['id_magasin'])) {
 	$alias_magasin = $_SESSION['alias_magasin'];
 } else {
 	if($first_config == NULL){
-		echo "non"; exit;
 		header("Location: index.php");
 	}
 }
@@ -39,11 +38,13 @@ if($action == "add_fournisseur"){
 	add_fournisseur();
 } else if($action == "sup_avant_date"){
 	sup_avant_date();
+} else if($action == "add_rep"){
+	add_rep();
 } else if($action == "def_annees_purge"){
 	def_annees_purge();
 } else if($action == "add_user"){
 	add_user();
-} else if($action == "del_user"){
+} else if($action == "del_user" || $action == "del_rep"){
 	del_user();
 } else if($action == "add_radio"){
 	add_radio();
@@ -64,7 +65,6 @@ if($action == "add_fournisseur"){
 } else if($action == "sup_panne_avant_date"){
 	sup_panne_avant_date();
 }
-
 
 
 function format_date($date){
@@ -121,6 +121,55 @@ function add_fournisseur(){
 
 		if($result){
 			header("Location: admin.php?message=add_fournisseur_ok");
+		}
+
+	}
+}
+
+function add_rep(){
+	global $id_magasin, $mysqli;
+
+	$nom_rep = NULL;
+	if (isset($_POST['nom_rep'])) {
+		$nom_rep = $_POST['nom_rep'];
+		$nom_rep = strtoupper($nom_rep);
+	}
+	$mail_rep = NULL;
+	if (isset($_POST['mail_rep'])) {
+		$mail_rep = $_POST['mail_rep'];
+	}
+	$adresse_rep = NULL;
+	if (isset($_POST['adresse_rep'])) {
+		$adresse_rep = $_POST['adresse_rep'];
+		$adresse_rep = strtoupper($adresse_rep);
+	}
+
+
+	if($nom_rep == NULL){
+		header("Location: admin.php?message=add_ko");
+	} else {
+
+		$query_verify_exist = "SELECT * FROM `utilisateurs` WHERE `nom` = '$nom_rep' AND `fonction` =  'REPARATEUR' AND `secteur` = '$nom_rep' AND`id_magasin` = '$id_magasin';";
+		$result_verify = $mysqli->query($query_verify_exist);
+		if($result_verify){
+			$nb_results = $result_verify->num_rows;
+			$result_verify->close();
+		} else {
+			$nb_results = 0;
+		}
+
+		if($nb_results == 0){
+			$query_insert_user = "INSERT INTO `utilisateurs` (`id`, `nom`, `fonction`, `secteur`, `email`, `adresse`, `id_magasin`, `non_rendu`)
+			VALUES (NULL, '$nom_rep', 'REPARATEUR', '$nom_rep', '$mail_rep', '$adresse_rep','$id_magasin', '0');";
+			$result = $mysqli->query($query_insert_user);
+		} else{
+			header("Location: admin.php?message=add_rep_ko");
+		}
+
+
+
+		if($result){
+			header("Location: admin.php?message=add_rep_ok");
 		}
 
 	}
@@ -247,21 +296,28 @@ function add_user(){
 }
 
 function del_user(){
-	global $id_magasin, $mysqli;
+	global $id_magasin, $mysqli, $action;
 
 	$user_code = NULL;
 	$user_code2 = NULL;
-	if (isset($_POST['user_code'])) {
-		$user_code = $_POST['user_code'];
-		//Récupération des nombres dans la chaine de charactères
-		$user_code2 = preg_replace('~\D~', '', $user_code);
+	if($action == 'del_rep'){
+		if (isset($_POST['id_rep'])) {
+			$user_code = $_POST['id_rep'];
+			//Récupération des nombres dans la chaine de charactères
+			$user_code2 = preg_replace('~\D~', '', $user_code);
+		}
+	} else{
+		if (isset($_POST['user_code'])) {
+			$user_code = $_POST['user_code'];
+			//Récupération des nombres dans la chaine de charactères
+			$user_code2 = preg_replace('~\D~', '', $user_code);
+		}
 	}
 
 	if($user_code == NULL || $id_magasin == NULL){
 		header("Location: admin.php?message=del_ko&user_code_del=$user_code&magasin=$id_magasin");
 	} else{
 		$query_del_user = "DELETE FROM `utilisateurs` WHERE `utilisateurs`.`id` = '$user_code2' AND `id_magasin`='$id_magasin';";
-		echo $query_del_user;
 		$result = $mysqli->query($query_del_user);
 		$nbLignes = $mysqli->affected_rows;
 
@@ -270,7 +326,11 @@ function del_user(){
 		}
 
 		if($result && $nbLignes != 0){
-			header("Location: admin.php?message=del_user_ok");
+			if($action == "del_rep"){
+				header("Location: admin.php?message=del_rep_ok");
+			} else {
+				header("Location: admin.php?message=del_user_ok");
+			}
 		} else{
 			header("Location: admin.php?message=del_ko&user_code_del=$user_code&magasin=$id_magasin");
 		}
@@ -415,13 +475,17 @@ function add_mag(){
 		$alias = $_POST['alias'];
 		$alias = strtoupper($alias);
 	}
+	$adresse = NULL;
+	if (isset($_POST['adresse'])) {
+		$adresse = $_POST['adresse'];
+	}
 	$enseigne = NULL;
 	if (isset($_POST['enseigne'])) {
 		$enseigne = $_POST['enseigne'];
 	}
 
 	if($departement_add == NULL || $nom_mag == NULL || $alias == NULL || $enseigne == NULL){
-		header("Location: admin.php?message=add_ko&&departement_add=$departement_add&nom_mag=$nom_mag&alias=$alias&enseigne=$enseigne");
+		header("Location: admin.php?message=add_ko&&departement_add=$departement_add&nom_mag=$nom_mag&alias=$alias&enseigne=$enseigne&adresse=$adresse");
 	} else {
 
 		$query_verify_exist = "SELECT * FROM `magasins` WHERE `departement` = '$departement_add' AND `nom` = '$nom_mag';";
@@ -435,8 +499,11 @@ function add_mag(){
 		if($nb_results >= 1){
 			header("Location: admin.php?message=mag_exist");
 		} else{
-			$query_insert_mag = "INSERT INTO `magasins` (`id_magasin`, `departement`, `alias`, `nom`, `enseigne`)
-			VALUES (NULL, '$departement_add', '$alias', '$nom_mag', '$enseigne');";
+			//On ajoute un symbole qui permettra de gerer les sauts de lignes quand on Récupère dans la base de données
+			// echo $adresse; exit;
+
+			$query_insert_mag = "INSERT INTO `magasins` (`id_magasin`, `departement`, `adresse`, `alias`, `nom`, `enseigne`)
+			VALUES (NULL, '$departement_add', '$adresse', '$alias', '$nom_mag', '$enseigne');";
 			$result = $mysqli->query($query_insert_mag);
 
 			if($result){
@@ -458,7 +525,7 @@ function add_mag(){
 
 				header("Location: admin.php?message=add_mag_ok");
 			} else{
-				header("Location: admin.php?message=add_ko&&departement_add=$departement_add&nom_mag=$nom_mag&alias=$alias&enseigne=$enseigne");
+						header("Location: admin.php?message=add_ko&&departement_add=$departement_add&nom_mag=$nom_mag&alias=$alias&enseigne=$enseigne&adresse=$adresse");
 			}
 		}
 

@@ -4,9 +4,9 @@ if (isset($_GET['first_config'])) {
 	$first_config = $_GET['first_config'];
 }
 
-if($first_config == NULL){
-	$id_magasin = NULL;
+$id_magasin = NULL;
 
+if($first_config == NULL){
 	// Ouvre session
 	session_start();
 
@@ -48,6 +48,10 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 		<!-- Fichiers CSS -->
 		<link rel='stylesheet' type='text/css' href='./css/parametres.css' media='screen' />
 		<link rel='stylesheet' type='text/css' href='./css/general.css' media='screen' />
+
+		<!-- Fichiers Javascripts -->
+		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
+		<script type='text/javascript' src='./js/ajax2.js'></script>
 
 		<!-- Encodage UTF8 pour les accents -->
 		<meta charset='UTF-8'>
@@ -97,7 +101,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 			<form class='depart_soc' action='define_config.php' method='post'>
 			<div class='departement'>
 				<label> Département : </label>
-				<select class='' name='departement'>";
+				<select class='' name='departement' id='departement'>";
 
 				$query_departement = "SELECT * FROM `magasins` GROUP BY `departement` ORDER BY `id_magasin` ASC ;";
 				$result_departement = $mysqli->query($query_departement);
@@ -116,7 +120,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 
 				<div class='societe'>
 				<label> Nom de la société : </label>
-				<select name='nom_societe'>";
+				<select name='nom_societe' id='nom_societe'>";
 
 
 
@@ -131,19 +135,21 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 						$result_societe->close();
 					}
 
-					if($id_magasin != NULL){
-						$query_mail = "SELECT * FROM `parametres` WHERE `id_magasin` = '$id_magasin';";
-						$result_mail = $mysqli->query($query_mail);
+					$mail_admin = NULL;
+					$ip_reseau = NULL;
+					if($id_magasin == NULL){
+						$id_magasin = 0;
+					}
 
-						if($result_mail){
-							while ($parametre = $result_mail->fetch_assoc()) {
-								$mail_admin = $parametre['mail_admin'];
-							}
-							$result_mail->close();
+					$query_mail = "SELECT * FROM `parametres` WHERE `id_magasin` = '$id_magasin';";
+					$result_mail = $mysqli->query($query_mail);
+
+					if($result_mail){
+						while ($parametre = $result_mail->fetch_assoc()) {
+							$mail_admin = $parametre['mail_admin'];
+							$ip_reseau = $parametre['ip_reseau'];
 						}
-					} else {
-						$mail_admin = NULL;
-						$ip_reseau = NULL;
+						$result_mail->close();
 					}
 
 					echo "</select>
@@ -152,12 +158,12 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 					<div class='ip_reseau'>
 						<label> Adresse Réseau avec masque (ex : 10.100.101.0/24) : </label>
 						<p style='color: red'> Pour saisir plusieurs adresses réseau, veuillez les séparer par des virgules </p>
-						<textarea rows='3' cols='80' name='ip_reseau' placeholder='10.100.100.0/24, 10.100.101.0/24, 10.100.102.0/24'>$ip_reseau</textarea>
+						<textarea id='ip_reseau' rows='3' cols='80' name='ip_reseau' placeholder='10.100.100.0/24, 10.100.101.0/24, 10.100.102.0/24'>$ip_reseau</textarea>
 					</div>
 
 					<div class='mail'>
 						<label> Adresse E-mail de l'admin : </label>
-						<input type='text' name='mail_admin' value='$mail_admin'>
+						<input id='mail_admin' type='text' name='mail_admin' value='$mail_admin'>
 					</div>
 					<input onclick=" . '"' . "document.location.href='index.php'" . '"' . "type='button' id='annuler_modal' value='Annuler'>
 				<input type='submit' id='valider_modal' value='Valider'>

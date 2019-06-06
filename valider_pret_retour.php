@@ -109,7 +109,6 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 
 				<!-- Liste de suggestion des codes utilisateurs -->
 					<datalist id="userCodes">
-							<optgroup label='Utilisateurs'>
 <?php
 											$fournisseurs = [];
 											$i = 0;
@@ -119,25 +118,22 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 											$result_users = $mysqli->query($query_users);
 
 											while ($user = $result_users->fetch_assoc()) {
-												if($user['fonction'] != 'FOURNISSEUR'){
+												if($user['fonction'] != 'FOURNISSEUR' && $user['fonction'] != 'REPARATEUR'){
 													echo "<option value='".$user['id']." ".$user['nom']." ".$user['prenom']."'>";
-												} else{
+												} else if($user['fonction'] == 'FOURNISSEUR'){
 													$fournisseurs[$i] = $user;
 													$i ++;
 												}
 											}
 
-											echo "</optgroup>
-											<optgroup label='Fournisseurs'>";
-
 											// Destruction résultat
 											$result_users->close();
+
+											echo "<option value='-----------FOURNISSEURS---------------------------------'>";
 
 											foreach ($fournisseurs as $user) {
 												echo "<option value='".$user['id']." ".$user['nom']." ".$user['prenom']."'>";
 											}
-
-											echo "</optgroup>";
 ?>
 					</datalist>
 

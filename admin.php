@@ -27,13 +27,16 @@ if (isset($_GET['info_magasin'])) {
 if($message == NULL) {$message_div = ""; $type = "";}
 if($message == "add_ko") {$message_div = "<div class='red'> Veuillez vérifier votre saisie </div>"; $type = "error";}
 if($message == "add_fournisseur_ko") {$message_div = "<div class='red'> Le fournisseur existe déjà ou les données ne sont pas correctes </div>"; $type = "error";}
+if($message == "add_rep_ko") {$message_div = "<div class='red'> Le Réparateur existe déjà ou les données ne sont pas correctes </div>"; $type = "error";}
 if($message == "del_ko") {$message_div = "<div class='red'> Veuillez vérifier votre saisie </div>"; $type = "error";}
 if($message == "mod_ko") {$message_div = "<div class='red'> Les modifications n'ont pas été prises en compte. Veuillez vérifier votre saisie </div>"; $type = "error";}
 if($message == "mag_exist") {$message_div = "<div class='red'> Le magasin que vous essayez d'ajouter existe déjà en base de données </div>"; $type = "error";}
 
 if($message == "add_user_ok") {$message_div = "<div class='green'> Utilisateur ajouté avec succès </div>"; $type = "success";}
 if($message == "add_fournisseur_ok") {$message_div = "<div class='green'> Fournisseur ajouté avec succès </div>"; $type = "success";}
+if($message == "add_rep_ok") {$message_div = "<div class='green'> Réparateur ajouté avec succès </div>"; $type = "success";}
 if($message == "del_user_ok") {$message_div = "<div class='green'> Utilisateur supprimé avec succès </div>"; $type = "success";}
+if($message == "del_rep_ok") {$message_div = "<div class='green'> Réparateur supprimé avec succès </div>"; $type = "success";}
 if($message == "add_radio_ok") {$message_div = "<div class='green'> Radiopad ajouté avec succès </div>"; $type = "success";}
 if($message == "add_radio_plage_ok") {$message_div = "<div class='green'> $nb_radio Radiopad(s) ajouté(s) avec succès </div>"; $type = "success";}
 if($message == "del_radio_ok") {$message_div = "<div class='green'> Radiopad supprimé avec succès </div>"; $type = "success";}
@@ -122,6 +125,28 @@ $magasin = NULL;
 if (isset($_GET['magasin'])) {
 	$magasin = $_GET['magasin'];
 }
+
+$adresse = NULL;
+if (isset($_GET['adresse'])) {
+	$adresse = $_GET['adresse'];
+}
+
+$nom_rep = NULL;
+if (isset($_GET['nom_rep'])) {
+	$nom_rep = $_GET['nom_rep'];
+}
+
+$mail_rep = NULL;
+if (isset($_GET['mail_rep'])) {
+	$mail_rep = $_GET['mail_rep'];
+}
+
+$adresse_rep = NULL;
+if (isset($_GET['adresse_rep'])) {
+	$adresse_rep = $_GET['adresse_rep'];
+}
+
+
 
 
 $nom_societe = NULL;
@@ -406,8 +431,12 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 						</div>
 
 						<div class="two">
-								<input onclick="document.location.href='historique_pannes.php'" class="ok" style="display: block" type="submit" value="Historique">
+							<input onclick="document.location.href='historique_pannes.php'" class="ok"  type="submit" value="Historique">
+
+							<input onclick="document.location.href='envoyer_reparation.php'" class="ok" style="display: block" type="submit" value="A Envoyer en Réparation">
 						</div>
+
+						<h3> Envoyer en Réparation </h3>
 
 
 							<h3> Supprimer toutes les pannes avant le (date) </h3>
@@ -542,6 +571,65 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 				</div>
 
 				<div class="container">
+					<h1 class="division_search"> Réparateurs <span class="caret"> </span></h1>
+
+					<div class="div_forms">
+						<h3> Ajouter un Réparateur </h3>
+
+						<form action="admin_functions.php" method="post">
+							<div class="two">
+								<label class="place_holder"> Nom Réparateur </label>
+								<input class="input" type="text" name="nom_rep" value="<?php echo $nom_rep; ?>" required>
+
+								<label class="place_holder"> Email </label>
+								<input class="input" type="text" name="mail_rep" value="<?php echo $mail_rep; ?>" required>
+							</div>
+
+							<div class="two">
+								<label class="place_holder"> Adresse Postale </label>
+								<textarea class="input" id='adresse' rows='8' cols='50' name='adresse_rep' style="margin-left: 30px; margin-top: 15px; width: 296px; height: 143px;" required> <?php echo $adresse_rep ?> </textarea>
+							</div>
+
+							<input class="input" type="hidden" name="action" value="add_rep">
+							<input class="ok" style="display: block" type="submit" value="Ajouter Réparateur">
+						</form>
+
+						<h3> Supprimer un Réparateur </h3>
+
+						<form action="admin_functions.php" method="post">
+							<div class="two">
+								<label class="place_holder"> Id ou  Nom Réparateur </label>
+								<input class="input" id="id_rep" type="text" name="id_rep" list="reparateurs" value="<?php echo $info_magasin; ?>" autocomplete="off" required>
+								<input class="input" type="hidden" name="action" value="del_rep">
+
+
+								<datalist id="reparateurs">
+	<?php
+										$query_rep = "SELECT * FROM `utilisateurs` WHERE `fonction` = 'REPARATEUR' AND `id_magasin` = '$id_magasin';";
+
+										//On lance la requete en base de données
+										$result_rep = $mysqli->query($query_rep);
+
+										if($result_rep){
+											while ($rep = $result_rep->fetch_assoc()) {
+												$id = $rep['id'];
+												$nom = $rep['nom'];
+
+												echo "<option value='$id - $nom'>";
+											}
+											// Destruction résultat
+											$result_rep->close();
+										}
+	?>
+								</datalist>
+							</div>
+							<input class="ok" style="display: block" type="submit" value="Supprimer Réparateur">
+						</form>
+
+					</div>
+				</div>
+
+				<div class="container">
 					<h1 class="division_search">  Magasins <span class="caret"> </span></h1>
 
 					<div class="div_forms">
@@ -563,9 +651,13 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 
 								<label class="place_holder"> Enseigne </label>
 								<input class="input" type="input" name="enseigne" value="<?php echo $enseigne ?>" required>
-								<input class="input" type="hidden" name="action" value="add_mag">
 							</div>
 
+							<label class="place_holder"> Adresse Postale </label>
+							<textarea class="input" id='adresse' rows='8' cols='50' name='adresse' style="margin-left: 30px; margin-top: 15px; width: 327px; height: 181px;" required> <?php echo $adresse ?> </textarea>
+
+
+							<input class="input" type="hidden" name="action" value="add_mag">
 							<input class="ok" style="display: block" type="submit" value="Ajouter Magasin">
 						</form>
 

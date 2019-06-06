@@ -11,6 +11,7 @@ session_start();
 $nom_societe = NULL;
 $departement = NULL;
 $id_magasin = NULL;
+$mag_adresse = NULL;
 $result_test = "false";
 $ip_match = "";
 
@@ -52,12 +53,24 @@ if($result_test == "true"){
 			$mail_admin = $parametre['mail_admin'];
 			$nb_annees_purge = $parametre['nombre_annees_purge'];
 
+			//Récupération adresse du magasin
+			$query_adresse = "SELECT * FROM `magasins` WHERE `id_magasin` = '$id_magasin';";
+			$result_adresse = $mysqli->query($query_adresse);
+			if($result_adresse){
+				while ($mag = $result_adresse->fetch_assoc()) {
+					$mag_adresse = $mag['adresse'];
+				}
+				$result_adresse->close();
+			}
+
+
 			$_SESSION['id_magasin'] = $id_magasin;
 			$_SESSION['nom_societe'] = $nom_societe;
 			$_SESSION['departement'] = $departement;
 			$_SESSION['mail_admin'] = $mail_admin;
 			$_SESSION['alias_magasin'] = $alias_magasin;
 			$_SESSION['nb_annees_purge'] = $nb_annees_purge;
+			$_SESSION['adresse_magasin'] = $mag_adresse;
 
 		}
 		$result_parametre->close();
