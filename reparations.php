@@ -300,6 +300,9 @@ if($ids_radios == NULL || $code_rep == NULL){
 	// Fermeture connection
 	$mysqli->close();
 
+	if($chronoposte != NULL){
+		generer_pdf();
+	}
 
 	if($mail_reparateur != NULL){
 		//Envoi du mail
@@ -307,10 +310,6 @@ if($ids_radios == NULL || $code_rep == NULL){
 		$mag = "HyperPad.".$nom_societe;
 
 		send_mail($mail_reparateur, $message, $subject, $mag);
-	}
-
-	if($chronoposte != NULL){
-		generer_pdf();
 	}
 
 }

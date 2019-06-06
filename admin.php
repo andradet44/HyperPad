@@ -436,8 +436,6 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 							<input onclick="document.location.href='envoyer_reparation.php'" class="ok" style="display: block" type="submit" value="A Envoyer en Réparation">
 						</div>
 
-						<h3> Envoyer en Réparation </h3>
-
 
 							<h3> Supprimer toutes les pannes avant le (date) </h3>
 
