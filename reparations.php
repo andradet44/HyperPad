@@ -138,6 +138,16 @@ if (isset($_POST['problemes'])) {
 	$problemes = $_POST['problemes'];
 }
 
+$lta = NULL;
+if (isset($_POST['lta'])) {
+	$lta = $_POST['lta'];
+}
+
+$dimensions = NULL;
+if (isset($_POST['dimensions'])) {
+	$dimensions = $_POST['dimensions'];
+}
+
 $chronoposte = NULL;
 if (isset($_POST['chronoposte'])) {
 	$chronoposte = $_POST['chronoposte'];
@@ -160,7 +170,10 @@ if($ids_radios == NULL || $code_rep == NULL){
 	$problemes = explode(',', $problemes);
 
 	$message = "
-	Bonjour, je vous envoi ci-dessous la liste du matériel envoyé en Réparation.
+	Bonjour,
+	<br><br>
+	Veuillez trouver ci-dessous la liste des Radiopads envoyé pour Réparation.
+	Merci de confirmer bonne réception.
 
 	<!DOCTYPE html>
 	<html>
@@ -220,7 +233,7 @@ if($ids_radios == NULL || $code_rep == NULL){
 	";
 	$taille = sizeof($ids_radios);
 	$i = 0;
-	$nb_colis = $taille - 1;
+	$nb_colis = 1;
 
 	$data = [];
 	$data_mat = [];
@@ -279,7 +292,10 @@ if($ids_radios == NULL || $code_rep == NULL){
 
 
 	$message .= "</tbody>";
-	$message .= "</table></body></html>";
+	$message .= "</table></body></html>
+	<br><br>
+	$nom_societe
+	";
 
 	$query_get_info = "SELECT * FROM `utilisateurs` WHERE `id` = '$code_rep' AND `fonction` = 'REPARATEUR' AND `id_magasin` = '$id_magasin';";
 	$result = $mysqli->query($query_get_info);
@@ -309,7 +325,7 @@ if($ids_radios == NULL || $code_rep == NULL){
 		$subject = "Matériel envoyé pour réparation";
 		$mag = "HyperPad.".$nom_societe;
 
-		send_mail($mail_reparateur, $message, $subject, $mag);
+		// send_mail($mail_reparateur, utf8_decode($message), utf8_decode($subject), $mag);
 	}
 
 }
@@ -348,7 +364,7 @@ function get_info($id_radio){
 }
 
 function generer_pdf(){
-	global $nom_societe, $mag_adresse, $adresse_rep, $reparateur, $nb_colis, $data;
+	global $nom_societe, $mag_adresse, $adresse_rep, $reparateur, $nb_colis, $data, $lta, $dimensions;
 
 
 	$pdf=new PDF_MC_Table();
@@ -388,7 +404,11 @@ function generer_pdf(){
 
 	foreach ($adresse_rep as $key => $adresse) {
 		$pdf->Ln(5);
-		$pdf->Cell(0,0,"$adresse", 0, 0, 'R');
+
+		$y=$pdf->GetY();
+		$pdf->SetXY(0,$y);
+
+		$pdf->Cell(0,0,$adresse, 0, 0, 'R');
 	}
 
   $date = date("d-m-Y");
@@ -416,16 +436,31 @@ function generer_pdf(){
 
 	$pdf->SetFont('Courier','',11);
 	$pdf->Ln(20);
-	$w = $pdf->GetStringWidth("Nombre de colis : $nb_colis")+6;
-	$pdf->Cell($w,9,"Nombre de colis : $nb_colis", 0, 0, 'C');
 
+	$x=$pdf->GetX();
+
+	$w = $pdf->GetStringWidth("Nombre de colis : $nb_colis")+6;
+	$pdf->Cell($w,9,"Nombre de colis : $nb_colis", 0, 0, 'L');
+	$pdf->Ln(5);
+
+	$y=$pdf->GetY();
+	$pdf->SetXY($x,$y);
+
+	$w = $pdf->GetStringWidth("Numéro LTA : $lta")+6;
+	$pdf->Cell($w,9,utf8_decode("Numéro LTA : $lta"), 0, 0, 'L');
+	$pdf->Ln(5);
+
+	$y=$pdf->GetY();
+	$pdf->SetXY($x,$y);
+
+	$w = $pdf->GetStringWidth("Dimensions : $dimensions")+6;
+	$pdf->Cell($w,9,"Dimensions : $dimensions", 0, 0, 'L');
 	$pdf->Ln(10);
 
 
 	$pdf->SetFont('Arial','',11);
 
 
-	//Table with 20 rows and 4 columns
 	$widths_col  = array(
 		$pdf->GetStringWidth($data[0][0]) + 2,
 		$pdf->GetStringWidth($data[0][1]) + 3,
@@ -464,7 +499,11 @@ function generer_pdf(){
 	}
 
 	$pdf->Ln(10);
-	$pdf->Cell(0,0,"Responsable informatique (Tampon et signature) :", 0, 0, 'R', false);
+	$pdf->Cell(0,0,"Responsable informatique", 0, 0, 'R', false);
+	$pdf->Ln(5);
+	$pdf->Cell(0,0,"(Tampon et signature) :", 0, 0, 'R', false);
+	$pdf->Ln(10);
+
 
 	$pdf->Output();
 }

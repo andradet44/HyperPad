@@ -146,6 +146,11 @@ if (isset($_GET['adresse_rep'])) {
 	$adresse_rep = $_GET['adresse_rep'];
 }
 
+$mail_user = NULL;
+if (isset($_GET['mail_user'])) {
+	$mail_user = $_GET['mail_user'];
+}
+
 
 
 
@@ -338,6 +343,11 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 								</select>
 								<input id='action_user' class="input" type="hidden" name="action" value="add_user">
 
+							</div>
+
+							<div class="two">
+								<label id='label_mail_user' class="place_holder" for="mail_user"> Adresse E-mail </label>
+								<input class="input" id="mail_user" type="text" name="mail_user" value="<?php echo $mail_user ?>">
 							</div>
 
 							<input class="ok" style="display: block" type="submit" value="Ajouter utilisateur">
@@ -658,6 +668,10 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 							<input class="input" type="hidden" name="action" value="add_mag">
 							<input class="ok" style="display: block" type="submit" value="Ajouter Magasin">
 						</form>
+
+						<h3> Modifier les informations d'un Magasin </h3>
+
+						<input class="ok" onclick="document.location.href='liste_mag.php'" style="display: block" type="submit" value="Lister les Magasins">
 
 						<h3> Supprimer un Magasin </h3>
 

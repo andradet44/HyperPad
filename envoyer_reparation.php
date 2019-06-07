@@ -33,7 +33,7 @@ $mysqli = new mysqli(DB_HOST, DB_LOGIN, DB_PWD, DB_NAME); mysqli_set_charset($my
 	<head>
 		<!-- Fichiers CSS -->
 		<link rel='stylesheet' type='text/css' href='./css/general.css' media='screen' />
-		<link rel='stylesheet' type='text/css' href='./css/pannes.css' media='screen' />
+		<link rel='stylesheet' type='text/css' href='./css/envoyer_reparation.css' media='screen' />
 
 		<!-- Fichiers Javascripts -->
 		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
@@ -94,18 +94,38 @@ if (isset($_SESSION['id_magasin'])) {
 if($nom_societe != NULL && $departement != NULL){
 	echo "<h2> $nom_societe $departement </h2>
 
+	<div class='gauche'>
+		<input style='display: block' class='input search' id='search' type='text' placeholder='Code radiopad'>
+
+		<input style='background: #2098D1' class='input ok' id='cocher_tout' type='button' value='Cocher/Décocher tout'>
+	</div>
+
+	<div class='droite'>
 	<form class='envoyer_rep' action='reparations.php' method='post'>
-		<div class='two'>
-			<label class='place_holder'> Réparateur : </label>
+		<div class='reparateur'>
+			<label class='container'>
+			Réparateur :
+			</label>
 			<input class='input' type='text' name='code_rep' list='repCodes' placeholder='Code réparateur' autocomplete='off' value='$code_rep' required>
+
+			<input id='envoyer_reparation' class='input ok' type='submit' value='Envoyer en Réparation'>
 		</div>
 
-		<div class='two'>
+		<div class='coli'>
+			<h1 style='color: red; font-size: 30px; margin-bottom: 10px;'> Expédition </h1>
 			<label class='container'>
 				<input id='non_check' type='checkbox' name='chronoposte' value='true' checked>
 				<span class='checkmark douane'></span>
 				Attestation de valeur
 			</label>
+
+			<label class='container'> Numéro LTA :
+			</label>
+			<input class='input' type='text' name='lta' placeholder='Numéro LTA'>
+
+			<label class='container'> Dimensions :
+			</label>
+			<input class='input' type='text' name='dimensions' placeholder='Dimensions'>
 
 		</div>
 
@@ -136,16 +156,10 @@ if($nom_societe != NULL && $departement != NULL){
 		<input id='dates_probleme' type='hidden' name='dates_probleme' value='$ids_radios'>
 		<input id='problemes' type='hidden' name='problemes' value='$ids_radios'>
 
-		<input id='envoyer_reparation' class='input ok' type='submit' value='Envoyer en Réparation'>
-
-		</form>";
+		</form>
+		</div>";
 
 	echo "
-	<input style='display: block' class='input search' id='search' type='text' placeholder='Code radiopad'>
-
-		<input style='background: #2098D1' class='input ok' id='cocher_tout' type='button' value='Cocher/Décocher tout'>
-
-
 	<table id='tab_search' class='tab_search avectri'>
 	<thead>
 	<tr class='th'>
@@ -153,8 +167,6 @@ if($nom_societe != NULL && $departement != NULL){
 	<th class='entete selection' data-tri='1' data-type='num'> Code Radiopad </th>
 	<th class='entete'> Problème </th>
 	<th class='entete'> Date Problème </th>
-	<th class='entete'> Status </th>
-	<th class='entete'> Date Réparation </th>
 	</tr>
 	</thead>
 	<tbody>
@@ -176,24 +188,6 @@ if($nom_societe != NULL && $departement != NULL){
 					$date_panne = $prob['date_panne'];
 					$date_reparation = $prob['date_reparation'];
 
-					$query_status = "SELECT * FROM `radiopads` WHERE `id_radio` = '$id_radio' AND `id_magasin` = '$id_magasin';";
-					$result_status = $mysqli->query($query_status);
-					if($result_status){
-						while ($status = $result_status->fetch_assoc()) {
-							$etat = $status['etat'];
-							if($etat == 'PROD') $etat_affichage = "En PROD";
-							if($etat == 'STOCK') $etat_affichage = "En Stock";
-							if($etat == 'REPARATION') $etat_affichage = "En Réparation";
-							if($etat == 'REBUS') $etat_affichage = "Au Rebus";
-							if($etat == 'REPARER') $etat_affichage = "A Envoyer en réparation";
-							if($etat == 'PERDU') $etat_affichage = "Perdu";
-						}
-						$result_status->close();
-					}
-
-					if($date_reparation == "0000-00-00 00:00:00"){
-						$date_reparation = "Non Réparé";
-					}
 
 					echo "<tr id='$id_radio' class='tr'>";
 
@@ -206,8 +200,6 @@ if($nom_societe != NULL && $departement != NULL){
 					echo "<td class='color code'> $id_radio </td>";
 					echo "<td id='panne$id_radio' class='color'> $panne </td>";
 					echo "<td id='date_panne$id_radio' class='color'> $date_panne </td>";
-					echo "<td class='color'> $etat_affichage </td>";
-					echo "<td class='color'> $date_reparation </td>";
 					echo "</tr>";
 				}
 

@@ -9,7 +9,6 @@ $nom_societe = NULL;
 $departement = NULL;
 $id_magasin = NULL;
 
-
 // Ouvre session
 session_start();
 
@@ -76,88 +75,63 @@ if($message == "error") {$message_div = "<div class='red'> Veuillez vérifier vo
 			</ul>
 		</nav>
 
-		<h2 class="section_title"> Liste des Radiopads </h2>
+		<h2 class="section_title"> Liste des Magasins </h2>
+
 <?php
 if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 	header("Location: index.php");
 } else {
 	echo "<h2> $nom_societe $departement </h2>";
 
-	echo "<input class='input search' id='search' type='text' placeholder='Code radiopad'>";
+	echo "<input class='input search' id='search' type='text' placeholder='Nom '>";
 
 	echo "
 	<table id='tab_search' class='tab_search avectri'>
 	<thead>
 		<tr class='th'>
-		<th class='entete selection' data-tri='1' data-type='num'> Code Radiopad </th>
-		<th class='entete'> SN </th>
-		<th class='entete'> Etat </th>
-		<th class='entete'> Affectation </th>
-		<th class='entete'> Changement batterie </th>
+		<th class='entete'> Magasin </th>
+		<th class='entete'> Département </th>
+		<th class='entete'> Alias </th>
+		<th class='entete'> Adresse </th>
 		</tr>
 	</thead>
 	<tbody>
 	";
 
 	//Récupération du nom et prénom de l'utilisateur
-	$query_radio_info = "SELECT * FROM `radiopads` WHERE `id_magasin` = '$id_magasin' ORDER BY `id_radio` ASC;";
-	$result_radio_info = $mysqli->query($query_radio_info);
+	$query_mag_info = "SELECT * FROM `magasins` ORDER BY `id_magasin` ASC;";
+	$result_mag_info = $mysqli->query($query_mag_info);
 
-	if($result_radio_info){
-			while ($radio = $result_radio_info->fetch_assoc()) {
-				$radio_code = $radio['id_radio'];
-				$sn = $radio['sn'];
-				$etat = $radio['etat'];
-				$affectation = $radio['affectation'];
-				$batterie = $radio['batterie'];
-				$batterie = format_date($batterie);
+	if($result_mag_info){
+		while ($mag = $result_mag_info->fetch_assoc()) {
+			$id = $mag['id_magasin'];
+			$departement_mag = $mag['departement'];
+			$adresse_mag = $mag['adresse'];
+			$alias_mag = $mag['alias'];
+			$nom = $mag['nom'];
+			echo "<tr id='$nom' class='tr'>";
 
-				$etat_affichage = "";
-				if($etat == 'PROD') $etat_affichage = "<option style='color: red' value='PROD' selected='selected'> En PROD </option>";
-				if($etat == 'STOCK') $etat_affichage = "<option style='color: red' value='STOCK' selected='selected'> En Stock</option>";
-				if($etat == 'REPARATION') $etat_affichage = "<option style='color: red' value='REPARATION' selected='selected'> En Réparation </option>";
-				if($etat == 'REBUS') $etat_affichage = "<option style='color: red' value='REBUS' selected='selected'> Au Rebus </option>";
-				if($etat == 'REPARER') $etat_affichage = "<option style='color: red' value='REPARER' selected='selected'> A Envoyer en réparation </option>";
-				if($etat == 'PERDU') $etat_affichage = "<option style='color: red' value='PERDU' selected='selected'> Perdu </option>";
+			echo "<td class='color code'> $id - $nom</td>";
+			echo "<td class='color'> $departement_mag </td>";
+			echo "<td class='color'> $alias_mag </td>";
+			echo "<td class='color'> <textarea class='input' name='adresse$id' rows='8' cols='50'>$adresse_mag</textarea> </td>";
 
+			echo "<td class='td_action color'>
+						<form action='admin_functions.php' method='post'>
+							<textarea  style='display: none' id='adresse$id' name='adresse_mag' rows='8' cols='50'>$adresse_mag</textarea>
+							<input type='hidden' name='id_mag' value='$id'>
 
-				echo "<tr id='$radio_code' class='tr'>";
-
-				echo "<td class='color code'> $radio_code </td>";
-				echo "<td class='color'> $sn </td>";
-				echo "<td class='color'>
-				<select class='input' name='etat1$radio_code'>
-					echo $etat_affichage;
-					<option value='PROD'> En PROD </option>
-					<option value='STOCK'> En Stock </option>
-					<option value='REPARATION'> En Réparation </option>
-					<option value='REBUS'> Au Rebus </option>
-					<option value='REPARER'> A Envoyer en réparation </option>
-					<option value='PERDU'> Perdu </option>
-				</select>
-				</td>";
-				echo "<td class='color'> <input class='input' type='text' name='affectation1$radio_code' value='$affectation'> </td>";
-				echo "<td class='color'> <input class='input' type='text' name='nouv_batterie1$radio_code' value='$batterie'> </td>";
-				echo "<td class='td_action color'>
-								<form action='admin_functions.php' method='post'>
-									<input type='hidden' id='etat1$radio_code' name='etat' value='$etat'>
-									<input type='hidden' id='affectation1$radio_code' name='affectation' value='$affectation'>
-									<input type='hidden' id='nouv_batterie1$radio_code' name='nouv_batterie' value='$batterie'>
-									<input type='hidden' name='code_radio' value='$radio_code'>
-									<input type='hidden' name='action' value='mod_radio_base'>
-									<input class='action' type='submit' value='Valider'>
-								</form>
-							</td>";
-				echo "</tr>";
-			}
-
-
-
-	$result_radio_info->close();
+							<input type='hidden' name='action' value='mod_mag_base'>
+							<input class='action' type='submit' value='Valider'>
+						</form>
+						</td>";
+			echo "</tr>";
+		}
+		$result_mag_info->close();
 	} else {
 		echo "<tr>";
 			echo "<td style='color: white'> . </td>";
-			echo "<td> </td>";
+			echo "<td>  </td>";
 			echo "<td>  </td>";
 			echo "<td>  </td>";
 			echo "<td>  </td>";
@@ -187,13 +161,6 @@ function format_date($date){
 		jQuery('#'+name).val(valeur);
 	});
 
-	jQuery('.input').keyup(function() {
-		var name = jQuery(this).attr('name');
-		var valeur = jQuery(this).val();
-
-		jQuery('#'+name).val(valeur);
-	});
-
 	jQuery('.input').click(function() {
 		var name = jQuery(this).attr('name');
 		var valeur = jQuery(this).val();
@@ -201,6 +168,19 @@ function format_date($date){
 		jQuery('#'+name).val(valeur);
 	});
 
+	jQuery('textarea').keyup(function() {
+		var name = jQuery(this).attr('name');
+		var valeur = jQuery(this).val();
+
+		jQuery('#'+name).val(valeur);
+	});
+
+	jQuery('textarea').click(function() {
+		var name = jQuery(this).attr('name');
+		var valeur = jQuery(this).val();
+
+		jQuery('#'+name).val(valeur);
+	});
 
 
 	// On affiche les messages

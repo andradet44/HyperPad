@@ -38,6 +38,8 @@ if($action == "add_fournisseur"){
 	add_fournisseur();
 } else if($action == "sup_avant_date"){
 	sup_avant_date();
+} else if($action == "mod_mag_base"){
+	mod_mag_base();
 } else if($action == "add_rep"){
 	add_rep();
 } else if($action == "def_annees_purge"){
@@ -66,6 +68,34 @@ if($action == "add_fournisseur"){
 	sup_panne_avant_date();
 }
 
+
+function mod_mag_base(){
+	global $mysqli;
+
+
+	$adresse_mag = NULL;
+	if (isset($_POST['adresse_mag'])) {
+		$adresse_mag = $_POST['adresse_mag'];
+		$adresse_mag = strtoupper($adresse_mag);
+	}
+
+	$id_mag = NULL;
+	if (isset($_POST['id_mag'])) {
+		$id_mag = $_POST['id_mag'];
+	}
+
+	if($id_mag == NULL){
+		header("Location: liste_mag.php?message=error");
+	} else{
+		$query_update = "UPDATE `magasins` SET `adresse` = '$adresse_mag' WHERE `id_magasin` = '$id_mag';";
+		$result = $mysqli->query($query_update);
+		if($result){
+			header("Location: liste_mag.php?message=success");
+		} else{
+			header("Location: liste_mag.php?message=error");
+		}
+	}
+}
 
 function format_date($date){
 	$date = explode('/',$date);
@@ -272,25 +302,29 @@ function add_user(){
 	if (isset($_POST['non_rendu'])) {
 		$non_rendu = $_POST['non_rendu'];
 	}
+	$mail_user = 0;
+	if (isset($_POST['mail_user'])) {
+		$mail_user = $_POST['mail_user'];
+	}
 
 	if(($user_code == NULL || $nom == NULL || $prenom == NULL || $id_magasin == NULL || $fonction == NULL) && $action != 'mod_user_base'){
-		header("Location: admin.php?message=add_ko&user_code=$user_code&nom=$nom&prenom=$prenom&fonction=$fonction&secteur=$secteur&id_magasin=$id_magasin");
+		header("Location: admin.php?message=add_ko&user_code=$user_code&nom=$nom&prenom=$prenom&fonction=$fonction&secteur=$secteur&id_magasin=$id_magasin&mail_user=$mail_user");
 	} else{
-		$query_insert_user = "INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `fonction`, `secteur`, `id_magasin`, `non_rendu`)
-		VALUES ('$user_code', '$nom', '$prenom', '$fonction', '$secteur', '$id_magasin', '$non_rendu');";
+		$query_insert_user = "INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `fonction`, `secteur`, `email`, `id_magasin`, `non_rendu`)
+		VALUES ('$user_code', '$nom', '$prenom', '$fonction', '$secteur', '$mail_user', '$id_magasin', '$non_rendu');";
 		$result = $mysqli->query($query_insert_user);
 
 
 		if($result){
 			if($action == "mod_user_base"){
 				//Quand il s'agit d'une modifications de données pour un utilisateur
-				header("Location: liste_users.php");
+				header("Location: liste_users.php?message=success");
 			} else {
 				//Quand il s'agit d'une insertion de données pour un utilisateur
 				header("Location: admin.php?message=add_user_ok");
 			}
 		} else{
-			header("Location: admin.php?message=add_ko&user_code=$user_code&nom=$nom&prenom=$prenom&fonction=$fonction&secteur=$secteur&id_magasin=$id_magasin");
+			header("Location: admin.php?message=add_ko&user_code=$user_code&nom=$nom&prenom=$prenom&fonction=$fonction&secteur=$secteur&id_magasin=$id_magasin&mail_user=$mail_user");
 		}
 	}
 }
@@ -645,9 +679,9 @@ function mod_radio_base(){
 	$result = $mysqli->query($query_mod);
 
 	if($result){
-		header("Location: liste_radio.php");
+		header("Location: liste_radio.php?message=success");
 	} else {
-		header("Location: liste_radio.php");
+		header("Location: liste_radio.php?message=error");
 	}
 }
 

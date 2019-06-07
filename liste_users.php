@@ -22,6 +22,16 @@ if (isset($_SESSION['departement'])) {
 if (isset($_SESSION['id_magasin'])) {
 	$id_magasin = $_SESSION['id_magasin'];
 }
+
+
+$message = NULL;
+if (isset($_GET['message'])) {
+	$message = $_GET['message'];
+}
+
+if($message == NULL) {$message_div = ""; $type = "";}
+if($message == "success") {$message_div = "<div class='green'> Modification prise en compte </div>"; $type = "success";}
+if($message == "error") {$message_div = "<div class='red'> Veuillez vérifier votre saisie </div>"; $type = "error";}
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +46,7 @@ if (isset($_SESSION['id_magasin'])) {
 		<!-- Fichiers Javascripts -->
 		<script type='text/javascript' src='./js/jquery-2.0.3.min.js'></script>
 		<script type='text/javascript' src='./js/search.js'></script>
+		<script src="./js/sweetalert/dist/sweetalert2.all.min.js"></script>
 
 
 		<!-- Encodage UTF8 pour les accents -->
@@ -84,6 +95,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 		<th class='entete'> Prénom </th>
 		<th class='entete'> Fonction </th>
 		<th class='entete'> Secteur </th>
+		<th class='entete'> E-mail </th>
 		<th class='entete'> Non rendus </th>
 		</tr>
 	</thead>
@@ -101,6 +113,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 			$prenom = $user['prenom'];
 			$fonction = $user['fonction'];
 			$secteur = $user['secteur'];
+			$mail_user = $user['email'];
 			$non_rendu = $user['non_rendu'];
 			echo "<tr id='$user_code' class='tr'>";
 
@@ -153,6 +166,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 			</select>
 			</td>";
 			echo "<td class='color'> <input class='input' type='text' name='secteur1$user_code' value='$secteur'> </td>";
+			echo "<td class='color'> <input class='input' type='text' name='mail_user$user_code' value='$mail_user'> </td>";
 			echo "<td class='color'> <input class='input' type='text' name='non_rendu1$user_code' value='$non_rendu'> </td>";
 			echo "<td class='td_action color'>
 						<form action='admin_functions.php' method='post'>
@@ -161,6 +175,7 @@ if($nom_societe == NULL || $departement == NULL || $id_magasin == NULL){
 							<input type='hidden' name='prenom' value='$prenom'>
 							<input type='hidden' id='fonction1$user_code' name='fonction' value='$fonction'>
 							<input type='hidden' id='secteur1$user_code' name='secteur' value='$secteur'>
+							<input type='hidden' id='mail_user$user_code' name='mail_user' value='$mail_user'>
 							<input type='hidden' id='non_rendu1$user_code' name='non_rendu' value='$non_rendu'>
 
 							<input type='hidden' name='action' value='mod_user_base'>
@@ -209,6 +224,26 @@ function format_date($date){
 
 		jQuery('#'+name).val(valeur);
 	});
+
+
+	// On affiche les messages
+	var message = "<?php echo $message_div ?>";
+	var type = "<?php echo $type ?>";
+
+	if(message != ""){
+		Swal.fire(
+			message,
+			'',
+			type
+		)
+	}
+
+	// On l'efface 5 secondes plus tard
+	setTimeout(function() {
+		if(message != ""){
+			message = "";
+		}
+	},5000);
 </script>
 
 	</body>

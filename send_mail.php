@@ -6,7 +6,9 @@ require './Classes/PHPMailer/src/Exception.php';
 require './Classes/PHPMailer/src/PHPMailer.php';
 require './Classes/PHPMailer/src/SMTP.php';
 
-function send_mail($mail_admin, $message, $subject, $from){
+function send_mail($mail_admin, $message, $subject, $from, $reply_for = ""){
+  if($reply_for == "") $reply_for = $mail_admin;
+
   $from2 = $from . "@gbh.fr";
   $mail = new PHPmailer();
 
@@ -23,7 +25,7 @@ function send_mail($mail_admin, $message, $subject, $from){
  $mail->AddAddress($mail_admin,'Admin'); // ajout du destinataire
  $mail->From = "$from2"; // adresse mail de l’expéditeur
  $mail->FromName = "$from"; // nom de l’expéditeur
- $mail->AddReplyTo("$mail_admin","HyperPad"); // adresse mail et nom du contact de retour
+ $mail->AddReplyTo("$reply_for","Responsable informatique"); // adresse mail et nom du contact de retour
  $mail->IsHTML(true); // envoi du mail au format HTML
  $mail->Subject = "$subject"; // sujet du mail
  $mail->Body = "$message"; // le corps de texte du mail en HTML
